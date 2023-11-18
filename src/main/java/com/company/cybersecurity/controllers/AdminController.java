@@ -1,5 +1,6 @@
 package com.company.cybersecurity.controllers;
 
+import com.company.cybersecurity.dtos.RegistrationDto;
 import com.company.cybersecurity.dtos.SaveUserDto;
 import com.company.cybersecurity.exceptions.UserNotFoundException;
 import com.company.cybersecurity.models.Role;
@@ -53,8 +54,15 @@ public class AdminController {
 
     @PostMapping("/users/new")
     public String saveUser(@ModelAttribute("saveUserDto") SaveUserDto dto, Model model) {
-        System.out.println(dto);
-        model.addAttribute("", "");
+        if (!dto.getPassword().equals(dto.getConfirmPassword())) {
+            model.addAttribute("passwordError", "Пароли не совпадают");
+            return "users/registration";
+        }
+        if (!userService.saveUser(SaveUserDto.toUser(dto))) {
+            model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
+            return "users/registration";
+        }
+
         return "redirect:/admin/users";
     }
 

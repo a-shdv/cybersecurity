@@ -3,17 +3,14 @@ package com.company.cybersecurity.controllers;
 import com.company.cybersecurity.dtos.ChangePasswordDto;
 import com.company.cybersecurity.dtos.RegistrationDto;
 import com.company.cybersecurity.exceptions.OldPasswordIsWrongException;
-import com.company.cybersecurity.exceptions.UserNotFoundException;
 import com.company.cybersecurity.models.User;
 import com.company.cybersecurity.services.UserService;
-import liquibase.pro.packaged.S;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
