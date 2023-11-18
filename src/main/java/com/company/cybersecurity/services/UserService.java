@@ -1,6 +1,8 @@
 package com.company.cybersecurity.services;
 
 import com.company.cybersecurity.exceptions.OldPasswordIsWrongException;
+import com.company.cybersecurity.exceptions.PasswordsMismatch;
+import com.company.cybersecurity.exceptions.UserAlreadyExistsException;
 import com.company.cybersecurity.exceptions.UserNotFoundException;
 import com.company.cybersecurity.models.Role;
 import com.company.cybersecurity.models.User;
@@ -56,19 +58,18 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    public boolean saveUser(User user) {
-        User userFromDB = userRepository.findByUsername(user.getUsername());
-
-        if (userFromDB != null) {
-            return false;
+    public boolean isAlreadyExists(User user) throws UserAlreadyExistsException {
+        if (user != null) {
+            throw new UserAlreadyExistsException("Пользователь с таким именем уже существует!");
         }
+        return false;
+    }
 
+    public void saveUser(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setAccountNonLocked(true);
         user.setRoles(Collections.singletonList(Role.USER));
-
         userRepository.save(user);
-        return true;
     }
 
 
@@ -83,13 +84,22 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
-    public boolean changePassword(String oldPassword, String newPassword, User user) throws OldPasswordIsWrongException {
-        if (bCryptPasswordEncoder.matches(oldPassword, user.getPassword())) {
-            user.setPassword(bCryptPasswordEncoder.encode(newPassword));
-            userRepository.save(user);
-            return true;
+    public boolean isPasswordsMatch(String password, String confirmPassword) throws PasswordsMismatch {
+        if (!password.equals(confirmPassword))
+            throw new PasswordsMismatch("Пароли не совпадают!");
+        return true;
+    }
+
+    public boolean isOldPasswordRight(String password, String oldPassword) throws OldPasswordIsWrongException {
+        if (!bCryptPasswordEncoder.matches(password, oldPassword)) {
+            throw new OldPasswordIsWrongException("Старый пароль не верный!");
         }
-        return false;
+        return true;
+    }
+
+    public void changePassword(User user, String newPassword) {
+        user.setPassword(bCryptPasswordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     public void lockUser(User user) {

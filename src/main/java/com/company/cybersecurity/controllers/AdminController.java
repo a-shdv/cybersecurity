@@ -54,14 +54,14 @@ public class AdminController {
 
     @PostMapping("/users/new")
     public String saveUser(@ModelAttribute("saveUserDto") SaveUserDto dto, Model model) {
-        if (!dto.getPassword().equals(dto.getConfirmPassword())) {
-            model.addAttribute("passwordError", "Пароли не совпадают");
-            return "users/registration";
-        }
-        if (!userService.saveUser(SaveUserDto.toUser(dto))) {
-            model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
-            return "users/registration";
-        }
+//        if (!dto.getPassword().equals(dto.getConfirmPassword())) {
+//            model.addAttribute("passwordError", "Пароли не совпадают");
+//            return "users/registration";
+//        }
+//        if (!userService.saveUser(SaveUserDto.toUser(dto))) {
+//            model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
+//            return "users/registration";
+//        }
 
         return "redirect:/admin/users";
     }

@@ -8,11 +8,9 @@
     <title>Деканат: Зарегистрироваться</title>
 </head>
 <body>
-<div th:if="${passwordError != null && !passwordError.isEmpty()}">
-    <div th:text="${passwordError}"></div>
-</div>
-<div th:if="${usernameError != null && !usernameError.isEmpty()}">
-    <div th:text="${usernameError}"></div>
+
+<div th:if="${message != null}">
+    <div th:text="${message}"></div>
 </div>
 <form method="post" th:action="@{/registration}" th:object="${registrationDto}">
     <label for="username">Имя пользователя</label>

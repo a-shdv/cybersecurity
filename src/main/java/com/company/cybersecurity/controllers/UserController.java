@@ -3,6 +3,8 @@ package com.company.cybersecurity.controllers;
 import com.company.cybersecurity.dtos.ChangePasswordDto;
 import com.company.cybersecurity.dtos.RegistrationDto;
 import com.company.cybersecurity.exceptions.OldPasswordIsWrongException;
+import com.company.cybersecurity.exceptions.PasswordsMismatch;
+import com.company.cybersecurity.exceptions.UserAlreadyExistsException;
 import com.company.cybersecurity.models.User;
 import com.company.cybersecurity.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +48,7 @@ public class UserController {
         model.addAttribute("errorMessage", errorMessage);
         return "users/login";
     }
+
     @GetMapping("/registration")
     public String registration() {
         return "users/registration";
@@ -53,15 +56,21 @@ public class UserController {
 
     @PostMapping("/registration")
     public String registration(@ModelAttribute("registrationDto") RegistrationDto dto, Model model) {
-        if (!dto.getPassword().equals(dto.getConfirmPassword())) {
-            model.addAttribute("passwordError", "Пароли не совпадают");
+        User userFromDb = userService.findUserByUsername(dto.getUsername());
+        String message = null;
+        try {
+            boolean isPasswordsMatch = userService.isPasswordsMatch(dto.getPassword(), dto.getConfirmPassword());
+            boolean isAlreadyExists = userService.isAlreadyExists(userFromDb);
+            if (isPasswordsMatch && !isAlreadyExists) {
+                userService.saveUser(RegistrationDto.toUser(dto));
+            }
+            message = "Пользователь " + dto.getUsername() + "успешно создан!";
+        } catch (PasswordsMismatch | UserAlreadyExistsException e) {
+            message = e.getLocalizedMessage();
+            model.addAttribute("message", message);
             return "users/registration";
         }
-        if (!userService.saveUser(RegistrationDto.toUser(dto))) {
-            model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
-            return "users/registration";
-        }
-
+        model.addAttribute("message", message);
         return "redirect:/";
     }
 
@@ -74,11 +83,14 @@ public class UserController {
     public String changePassword(@ModelAttribute("changePasswordDto") ChangePasswordDto dto, @AuthenticationPrincipal User user, Model model) {
         String message = null;
         try {
-            message = userService.changePassword(dto.getOldPassword(), dto.getNewPassword(), user)
-                    ? "Пароль был успешно изменен!"
-                    : "Старый пароль неверный!";
-        } catch (OldPasswordIsWrongException e) {
-            e.getLocalizedMessage();
+            boolean isPasswordsMatch = userService.isPasswordsMatch(dto.getNewPassword(), dto.getConfirmPassword());
+            boolean isOldPasswordRight = userService.isOldPasswordRight(dto.getNewPassword(), dto.getOldPassword());
+            if (isPasswordsMatch && isOldPasswordRight) {
+                userService.changePassword(user, dto.getNewPassword());
+                message = "Пароль изменен успешно!";
+            }
+        } catch (OldPasswordIsWrongException | PasswordsMismatch e) {
+            message = e.getLocalizedMessage();
         }
         model.addAttribute("message", message);
         return "users/change-password";
