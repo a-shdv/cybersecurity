@@ -1,20 +1,68 @@
 package com.company.cybersecurity.services;
 
+import com.company.cybersecurity.exceptions.UserAlreadyExistsException;
+import com.company.cybersecurity.exceptions.UserNotFoundException;
+import com.company.cybersecurity.models.Role;
 import com.company.cybersecurity.models.User;
 import com.company.cybersecurity.repos.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 @Service
+@Slf4j
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
+
+    public User findUserById(Long userId) throws UserNotFoundException {
+        Optional<User> userFromDb = userRepository.findById(userId);
+        return userFromDb.orElseThrow(() -> new UserNotFoundException("Пользователь не найден!"));
+    }
+
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public boolean saveUser(User user) throws UserAlreadyExistsException {
+        User userFromDB = userRepository.findByUsername(user.getUsername());
+
+        if (userFromDB != null) {
+            throw new UserAlreadyExistsException("Пользователь с именем " + user.getUsername() + " уже существует!");
+        }
+
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setBanned(false);
+        user.setRoles(Collections.singletonList(Role.USER));
+
+        userRepository.save(user);
+        return true;
+    }
+
+
+    public boolean deleteUser(Long userId) {
+        if (userRepository.findById(userId).isPresent()) {
+            userRepository.deleteById(userId);
+            log.info("User with id " + userId + " has been deleted");
+            return true;
+        }
+
+        log.info("Cannot delete user with id " + userId);
+        return false;
     }
 
     @Override
