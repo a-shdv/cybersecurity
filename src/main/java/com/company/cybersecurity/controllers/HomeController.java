@@ -25,8 +25,9 @@ public class HomeController {
         return "home";
     }
 
+
     @GetMapping("/error")
-    public String error() {
+    public String handleError() {
         return "error";
     }
 }

@@ -5,11 +5,12 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Деканат: 404</title>
+    <title>Деканат: Ошибка</title>
 </head>
 <body>
-    <h4>Что-то пошло не так...</h4>
-    <p>Страница не найдена!</p>
-    <a href="/">Вернуться на главную</a>
+    <h2>Что-то пошло не так...</h2>
+    <div class="alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+    <br>
+    <button onclick="history.back()">Вернуться</button>
 </body>
 </html>

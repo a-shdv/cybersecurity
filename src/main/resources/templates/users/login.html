@@ -9,7 +9,10 @@
 </head>
 <body>
 <h1>Авторизоваться</h1>
-<form th:action="@{/login}" method='post'>
+
+<form th:action="@{/login}" method="post">
+    <div class="alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+    <br>
     <table>
         <tr>
             <!-- Имя пользователя -->
@@ -22,9 +25,7 @@
             <td><input type='password' name='password' /></td>
         </tr>
         <!-- Войти -->
-        <tr>
-            <td><input type="submit" value="Войти" /></td>
-        </tr>
+        <tr><td><input type="submit" value="Войти" /></td></tr>
     </table>
 </form>
 <a th:href="@{/}">На главную</a>
