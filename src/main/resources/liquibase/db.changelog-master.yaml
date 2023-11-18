@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: liquibase/changesets/00_create_roles_table.sql
+  - include:
+      file: liquibase/changesets/01_create_users_table.sql

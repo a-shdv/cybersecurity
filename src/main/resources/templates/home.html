@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Деканат: Главная</title>
+</head>
+<body>
+<h1>home</h1>
+<!--Error message-->
+<div th:if="${message != null}">
+    <div th:text="${message}"></div>
+</div>
+
+<div th:text="${#authentication.name}"></div>
+<ul>
+
+    <!-- Зарегистрироваться -->
+    <div sec:authorize="!isAuthenticated()">
+        <!-- Зарегистрироваться -->
+        <li><a th:href="@{/registration}">Зарегистрироваться</a></li>
+        <!-- Войти-->
+        <li><a th:href="@{/login}">Войти</a></li>
+    </div>
+
+
+    <!-- Пользователь -->
+    <div sec:authorize="isAuthenticated()">
+        <!-- Сменить пароль -->
+        <li><a th:href="@{/change-password}">Сменить пароль</a></li>
+    </div>
+
+    <br>
+
+    <!-- Администратор -->
+    <div th:if="${user != null && user.getRoles().get(0).getAuthority().equals('ADMIN')}">
+        <li><a th:href="@{/admin/users}">Пользователи</a></li>
+    </div>
+
+    <br>
+    
+    <div sec:authorize="isAuthenticated()">
+        <!-- Выйти -->
+        <li><a th:href="@{/logout}">Выйти</a></li>
+    </div>
+
+</ul>
+
+
+</body>
+</html>

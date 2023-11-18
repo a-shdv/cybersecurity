@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Деканат: Зарегистрироваться</title>
+</head>
+<body>
+<!--Error message-->
+<div th:if="${message != null}">
+    <div th:text="${message}"></div>
+</div>
+<form method="post" th:action="@{/registration}" th:object="${registrationDto}">
+    <label for="username">Имя пользователя</label>
+    <input type="text" name="username" id="username" required>
+    <br>
+    <label for="email">Электронная почта</label>
+    <input type="email" name="email" id="email" required>
+    <br>
+    <label for="password">Пароль</label>
+    <input type="password" name="password" id="password" required>
+    <br>
+    <label for="confirmPassword">Подтвердите пароль</label>
+    <input type="password" name="confirmPassword" id="confirmPassword" required>
+    <br>
+    <input type="submit" id="form-submit" value="Зарегистрироваться">
+</form>
+<a th:href="@{/}">На главную</a>
+
+</body>
+</html>
