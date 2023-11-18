@@ -12,9 +12,4 @@ public class CybersecurityApplication {
         SpringApplication.run(CybersecurityApplication.class, args);
     }
 
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
 }

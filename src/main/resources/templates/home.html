@@ -25,9 +25,6 @@
     <div sec:authorize="isAuthenticated()">
         <!-- Сменить пароль -->
         <li><a th:href="@{/change-password}">Сменить пароль</a></li>
-        <br>
-        <!-- Выйти -->
-        <li><a th:href="@{/logout}">Выйти</a></li>
     </div>
 
     <br>
@@ -35,6 +32,13 @@
     <!-- Администратор -->
     <div th:if="${user != null && user.getRoles().get(0).getAuthority().equals('ADMIN')}">
         <li><a th:href="@{/admin/users}">Пользователи</a></li>
+    </div>
+
+    <br>
+    
+    <div sec:authorize="isAuthenticated()">
+        <!-- Выйти -->
+        <li><a th:href="@{/logout}">Выйти</a></li>
     </div>
 
 </ul>
