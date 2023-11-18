@@ -1,6 +1,6 @@
 package com.company.cybersecurity.services;
 
-import com.company.cybersecurity.exceptions.UserAlreadyExistsException;
+import com.company.cybersecurity.exceptions.OldPasswordIsWrongException;
 import com.company.cybersecurity.exceptions.UserNotFoundException;
 import com.company.cybersecurity.models.Role;
 import com.company.cybersecurity.models.User;
@@ -48,15 +48,19 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден!"));
     }
 
+    public User findUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
 
-    public boolean saveUser(User user) throws UserAlreadyExistsException {
+    public boolean saveUser(User user) {
         User userFromDB = userRepository.findByUsername(user.getUsername());
 
         if (userFromDB != null) {
-            throw new UserAlreadyExistsException("Пользователь с именем " + user.getUsername() + " уже существует!");
+            return false;
         }
 
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -76,6 +80,15 @@ public class UserService implements UserDetailsService {
         }
 
         log.info("Cannot delete user with id " + userId);
+        return false;
+    }
+
+    public boolean changePassword(String oldPassword, String newPassword, User user) throws OldPasswordIsWrongException {
+        if (bCryptPasswordEncoder.matches(oldPassword, user.getPassword())) {
+            user.setPassword(bCryptPasswordEncoder.encode(newPassword));
+            userRepository.save(user);
+            return true;
+        }
         return false;
     }
 

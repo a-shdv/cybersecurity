@@ -1,11 +1,9 @@
 package com.company.cybersecurity.models;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -24,7 +22,7 @@ public class User implements UserDetails {
     private String username;
     private String email;
     private String password;
-    @Transient private String passwordConfirm;
+    @Transient private String confirmPassword;
     private boolean isBanned;
 
     @Enumerated(EnumType.STRING)

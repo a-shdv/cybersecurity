@@ -23,8 +23,6 @@ public class AdminController {
         this.userService = userService;
     }
 
-
-
     @GetMapping("/users")
     @PreAuthorize("hasAuthority('ADMIN')")
     public String findAllUsers(Model model) {
@@ -41,7 +39,8 @@ public class AdminController {
         } else {
             throw new UserNotFoundException("User with id " + id + " was not found");
         }
-
         return "admins/user-id";
     }
+
+
 }

@@ -16,8 +16,12 @@
 
     <li><a th:href="@{/login}">Войти</a></li>
     <div sec:authorize="isAuthenticated()">
+        <li><a th:href="@{/change-password}">Сменить пароль</a></li>
         <li><a th:href="@{/logout}">Выйти</a></li>
     </div>
+
+    <br>
+
     <li><a th:href="@{/users}">Пользователи</a></li>
 </ul>
 

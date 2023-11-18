@@ -8,18 +8,24 @@
     <title>Деканат: Зарегистрироваться</title>
 </head>
 <body>
+<div th:if="${!passwordError.isEmpty()}">
+    <div th:text="${passwordError}"></div>
+</div>
+<div th:if="${!usernameError.isEmpty()}">
+    <div th:text="${usernameError}"></div>
+</div>
 <form method="post" th:action="@{/registration}">
     <label for="username">Имя пользователя</label>
-    <input type="text" name="username" id="username">
+    <input type="text" name="username" id="username" required>
     <br>
     <label for="email">Электронная почта</label>
-    <input type="email" name="email" id="email">
+    <input type="email" name="email" id="email" required>
     <br>
     <label for="password">Пароль</label>
-    <input type="password" name="password" id="password">
+    <input type="password" name="password" id="password" required>
     <br>
-    <label for="passwordConfirm">Подтвердите пароль</label>
-    <input type="password" name="passwordConfirm" id="passwordConfirm">
+    <label for="confirmPassword">Подтвердите пароль</label>
+    <input type="password" name="confirmPassword" id="confirmPassword" required>
     <br>
     <input type="submit" id="form-submit" value="Зарегистрироваться">
 </form>
