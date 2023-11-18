@@ -23,7 +23,7 @@ public class User implements UserDetails {
     private String email;
     private String password;
     @Transient private String confirmPassword;
-    private boolean isBanned;
+    private boolean isAccountNonLocked = true;
 
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "user_id"))
@@ -47,7 +47,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return isAccountNonLocked;
     }
 
     @Override

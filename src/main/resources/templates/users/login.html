@@ -12,17 +12,21 @@
 <form name='' th:action="@{/login}" method='POST'>
     <table>
         <tr>
+            <!-- Имя пользователя -->
             <td>Имя пользователя:</td>
             <td><input type='text' name='username' value=''></td>
         </tr>
         <tr>
+            <!-- Пароль -->
             <td>Пароль:</td>
             <td><input type='password' name='password' /></td>
         </tr>
+        <!-- Войти -->
         <tr>
-            <td><input name="submit" type="submit" value="submit" /></td>
+            <td><input type="submit" value="Войти" /></td>
         </tr>
     </table>
 </form>
+<a th:href="@{/}">На главную</a>
 </body>
 </html>

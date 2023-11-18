@@ -8,6 +8,35 @@
     <title>Деканат: Пользователи</title>
 </head>
 <body>
-test....
+<table border="1">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Электронная почта</th>
+        <th>Имя пользователя</th>
+        <th>Активен</th>
+        <th>Действие</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!--Users list-->
+    <tr th:each="user : ${users}">
+        <!--ID-->
+        <th th:text="${user.getId()}" th:value="userId"></th>
+        <!--Email-->
+        <td th:text="${user.getEmail()}"></td>
+        <!--Username-->
+        <td><a th:href="@{/admin/users/{id}(id=${user.getId()})}"><span th:text="${user.getUsername()}"></span></a></td>
+        <!--Account status-->
+        <td th:text="${user.isAccountNonLocked()}"></td>
+        <!--Actions-->
+        <td>
+            <a th:href="@{/admin/lock(userId=${user.getId()})}">Заблокировать</a>    |
+            <a th:href="@{/admin/unlock(userId=${user.getId()})}">Разблокировать</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<button onclick="history.back()">Вернуться</button>
 </body>
 </html>

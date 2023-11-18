@@ -64,7 +64,7 @@ public class UserService implements UserDetailsService {
         }
 
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setBanned(false);
+        user.setAccountNonLocked(true);
         user.setRoles(Collections.singletonList(Role.USER));
 
         userRepository.save(user);
@@ -92,13 +92,19 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
+    public void lockUser(User user) {
+        user.setAccountNonLocked(false);
+        userRepository.save(user);
+    }
+
+    public void unlockUser(User user) {
+        user.setAccountNonLocked(true);
+        userRepository.save(user);
+    }
 
     @Override
-    public UserDetails loadUserByUsername(String username) {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("Пользователь с именем " + username + "не найден!");
-        }
-        return user;
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return Optional.ofNullable(userRepository.findByUsername(username))
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь с именем " + username + "не найден!"));
     }
 }

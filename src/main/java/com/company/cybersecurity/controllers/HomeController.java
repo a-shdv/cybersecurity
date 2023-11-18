@@ -1,14 +1,12 @@
 package com.company.cybersecurity.controllers;
 
-import com.company.cybersecurity.exceptions.UserNotFoundException;
 import com.company.cybersecurity.models.User;
 import com.company.cybersecurity.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import java.security.Principal;
 
 @Controller
 public class HomeController {
@@ -20,12 +18,15 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home() {
+    public String home(@AuthenticationPrincipal User user, Model model) {
+        if (user != null) {
+            model.addAttribute("user", user);
+        }
         return "home";
     }
 
-//    @GetMapping("/error")
-//    public String error() {
-//        return "error";
-//    }
+    @GetMapping("/error")
+    public String error() {
+        return "error";
+    }
 }

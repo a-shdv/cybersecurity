@@ -8,10 +8,10 @@
     <title>Деканат: Зарегистрироваться</title>
 </head>
 <body>
-<div th:if="${!passwordError.isEmpty()}">
+<div th:if="${passwordError != null && !passwordError.isEmpty()}">
     <div th:text="${passwordError}"></div>
 </div>
-<div th:if="${!usernameError.isEmpty()}">
+<div th:if="${usernameError != null && !usernameError.isEmpty()}">
     <div th:text="${usernameError}"></div>
 </div>
 <form method="post" th:action="@{/registration}">
@@ -29,5 +29,7 @@
     <br>
     <input type="submit" id="form-submit" value="Зарегистрироваться">
 </form>
+<a th:href="@{/}">На главную</a>
+
 </body>
 </html>

@@ -12,17 +12,31 @@
 <div th:text="${#authentication.name}"></div>
 <ul>
 
-    <li><a th:href="@{/registration}">Зарегистрироваться</a></li>
+    <!-- Зарегистрироваться -->
+    <div sec:authorize="!isAuthenticated()">
+        <!-- Зарегистрироваться -->
+        <li><a th:href="@{/registration}">Зарегистрироваться</a></li>
+        <!-- Войти-->
+        <li><a th:href="@{/login}">Войти</a></li>
+    </div>
 
-    <li><a th:href="@{/login}">Войти</a></li>
+
+    <!-- Пользователь -->
     <div sec:authorize="isAuthenticated()">
+        <!-- Сменить пароль -->
         <li><a th:href="@{/change-password}">Сменить пароль</a></li>
+        <br>
+        <!-- Выйти -->
         <li><a th:href="@{/logout}">Выйти</a></li>
     </div>
 
     <br>
 
-    <li><a th:href="@{/users}">Пользователи</a></li>
+    <!-- Администратор -->
+    <div th:if="${user != null && user.getRoles().get(0).getAuthority().equals('ADMIN')}">
+        <li><a th:href="@{/admin/users}">Пользователи</a></li>
+    </div>
+
 </ul>
 
 

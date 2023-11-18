@@ -4,6 +4,6 @@ create table users
     username  varchar(255),
     email     varchar(255),
     password  varchar(255),
-    is_banned boolean,
+    is_account_non_locked boolean,
     primary key (id)
 );
