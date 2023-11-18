@@ -14,7 +14,7 @@
 <div th:if="${usernameError != null && !usernameError.isEmpty()}">
     <div th:text="${usernameError}"></div>
 </div>
-<form method="post" th:action="@{/registration}">
+<form method="post" th:action="@{/registration}" th:object="${registrationDto}">
     <label for="username">Имя пользователя</label>
     <input type="text" name="username" id="username" required>
     <br>

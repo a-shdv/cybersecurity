@@ -1,5 +1,6 @@
 package com.company.cybersecurity.controllers;
 
+import com.company.cybersecurity.dtos.SaveUserDto;
 import com.company.cybersecurity.exceptions.UserNotFoundException;
 import com.company.cybersecurity.models.Role;
 import com.company.cybersecurity.models.User;
@@ -8,16 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("admin")
+@PreAuthorize("hasAuthority('ADMIN')")
 public class AdminController {
     private final UserService userService;
 
@@ -27,7 +26,6 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-    @PreAuthorize("hasAuthority('ADMIN')")
     public String findAllUsers(Model model) {
         List<User> users = userService.findAllUsers()
                 .stream()
@@ -38,7 +36,6 @@ public class AdminController {
     }
 
     @GetMapping("/users/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
     public String findUserById(@PathVariable Long id, Model model) throws UserNotFoundException {
         User userFromDb = userService.findUserById(id);
         if (userFromDb != null) {
@@ -47,6 +44,18 @@ public class AdminController {
             throw new UserNotFoundException("User with id " + id + " was not found");
         }
         return "admins/user-id";
+    }
+
+    @GetMapping("/users/new")
+    public String saveUser() {
+        return "admins/user-save";
+    }
+
+    @PostMapping("/users/new")
+    public String saveUser(@ModelAttribute("saveUserDto") SaveUserDto dto, Model model) {
+        System.out.println(dto);
+        model.addAttribute("", "");
+        return "redirect:/admin/users";
     }
 
     @GetMapping("/lock")

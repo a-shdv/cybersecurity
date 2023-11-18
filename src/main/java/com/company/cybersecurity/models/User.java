@@ -22,7 +22,6 @@ public class User implements UserDetails {
     private String username;
     private String email;
     private String password;
-    @Transient private String confirmPassword;
     private boolean isAccountNonLocked = true;
 
     @Enumerated(EnumType.STRING)

@@ -1,6 +1,7 @@
 package com.company.cybersecurity.controllers;
 
 import com.company.cybersecurity.dtos.ChangePasswordDto;
+import com.company.cybersecurity.dtos.RegistrationDto;
 import com.company.cybersecurity.exceptions.OldPasswordIsWrongException;
 import com.company.cybersecurity.exceptions.UserNotFoundException;
 import com.company.cybersecurity.models.User;
@@ -35,12 +36,12 @@ public class UserController {
     }
 
     @PostMapping("/registration")
-    public String registration(User userForm, Model model) {
-        if (!userForm.getPassword().equals(userForm.getConfirmPassword())) {
+    public String registration(@ModelAttribute("registrationDto") RegistrationDto dto, Model model) {
+        if (!dto.getPassword().equals(dto.getConfirmPassword())) {
             model.addAttribute("passwordError", "Пароли не совпадают");
             return "users/registration";
         }
-        if (!userService.saveUser(userForm)) {
+        if (!userService.saveUser(RegistrationDto.toUser(dto))) {
             model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
             return "users/registration";
         }
