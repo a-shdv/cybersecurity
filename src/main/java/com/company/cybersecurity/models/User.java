@@ -1,7 +1,6 @@
 package com.company.cybersecurity.models;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,8 +12,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 @RequiredArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(exclude = {"password", "isAccountNonLocked", "roles"})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

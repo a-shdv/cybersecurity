@@ -71,7 +71,7 @@ public class UserController {
             return "users/registration";
         }
         model.addAttribute("message", message);
-        return "redirect:/";
+        return "home";
     }
 
     @GetMapping("/change-password")

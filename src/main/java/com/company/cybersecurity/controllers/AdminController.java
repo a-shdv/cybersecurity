@@ -2,6 +2,8 @@ package com.company.cybersecurity.controllers;
 
 import com.company.cybersecurity.dtos.RegistrationDto;
 import com.company.cybersecurity.dtos.SaveUserDto;
+import com.company.cybersecurity.exceptions.PasswordsMismatch;
+import com.company.cybersecurity.exceptions.UserAlreadyExistsException;
 import com.company.cybersecurity.exceptions.UserNotFoundException;
 import com.company.cybersecurity.models.Role;
 import com.company.cybersecurity.models.User;
@@ -47,23 +49,28 @@ public class AdminController {
         return "admins/user-id";
     }
 
-    @GetMapping("/users/new")
+    @GetMapping("/users/save")
     public String saveUser() {
         return "admins/user-save";
     }
 
-    @PostMapping("/users/new")
+    @PostMapping("/users/save")
     public String saveUser(@ModelAttribute("saveUserDto") SaveUserDto dto, Model model) {
-//        if (!dto.getPassword().equals(dto.getConfirmPassword())) {
-//            model.addAttribute("passwordError", "Пароли не совпадают");
-//            return "users/registration";
-//        }
-//        if (!userService.saveUser(SaveUserDto.toUser(dto))) {
-//            model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
-//            return "users/registration";
-//        }
+        User userFromDb = userService.findUserByUsername(dto.getUsername());
+        String message = null;
+        try {
+            boolean isPasswordsMatch = userService.isPasswordsMatch(dto.getPassword(), dto.getConfirmPassword());
+            boolean isAlreadyExists = userService.isAlreadyExists(userFromDb);
+            if (isPasswordsMatch && !isAlreadyExists) {
+                userService.saveUser(SaveUserDto.toUser(dto));
+            }
+            message = "Пользователь " + dto.getUsername() + " успешно создан!";
+        } catch (PasswordsMismatch | UserAlreadyExistsException e) {
+            message = e.getLocalizedMessage();
+        }
+        model.addAttribute("message", message);
 
-        return "redirect:/admin/users";
+        return "admins/user-save";
     }
 
     @GetMapping("/lock")
