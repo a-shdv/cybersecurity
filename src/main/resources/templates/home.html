@@ -1,18 +1,26 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Деканат: Главная</title>
 </head>
 <body>
-    <h1>home</h1>
-    <ul>
+<h1>home</h1>
+<div th:text="${#authentication.name}"></div>
+<ul>
 
-        <li><a th:href="@{/registration}">Зарегистрироваться</a></li>
-        <li><a th:href="@{/login}">Войти</a></li>
-    </ul>
+    <li><a th:href="@{/registration}">Зарегистрироваться</a></li>
+
+    <li><a th:href="@{/login}">Войти</a></li>
+    <div sec:authorize="isAuthenticated()">
+        <li><a th:href="@{/logout}">Выйти</a></li>
+    </div>
+    <li><a th:href="@{/users}">Пользователи</a></li>
+</ul>
+
+
 </body>
 </html>

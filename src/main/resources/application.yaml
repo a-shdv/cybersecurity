@@ -1,11 +1,13 @@
 spring:
-
-
   datasource:
     url: jdbc:postgresql://localhost:5432/cybersecurity_db
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
+
+  devtools:
+    restart:
+      poll-interval: 1s
 
   liquibase:
     url: jdbc:postgresql://localhost:5432/cybersecurity_db

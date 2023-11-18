@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -29,9 +30,22 @@ public class UserService implements UserDetailsService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
+    @PostConstruct
+    private void postConstruct() {
+        User user = Optional.ofNullable(userRepository.findByUsername("user")).orElse(new User("user", bCryptPasswordEncoder.encode("user")));
+        user.setRoles(Collections.singletonList(Role.USER));
+
+        User admin = Optional.ofNullable(userRepository.findByUsername("admin")).orElse(new User("admin", bCryptPasswordEncoder.encode("admin")));
+        admin.setRoles(Collections.singletonList(Role.ADMIN));
+
+        userRepository.save(user);
+        userRepository.save(admin);
+    }
+
+
     public User findUserById(Long userId) throws UserNotFoundException {
-        Optional<User> userFromDb = userRepository.findById(userId);
-        return userFromDb.orElseThrow(() -> new UserNotFoundException("Пользователь не найден!"));
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден!"));
     }
 
     public List<User> findAllUsers() {
@@ -64,6 +78,7 @@ public class UserService implements UserDetailsService {
         log.info("Cannot delete user with id " + userId);
         return false;
     }
+
 
     @Override
     public UserDetails loadUserByUsername(String username) {

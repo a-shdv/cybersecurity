@@ -3,7 +3,3 @@ databaseChangeLog:
       file: liquibase/changesets/00_create_roles_table.sql
   - include:
       file: liquibase/changesets/01_create_users_table.sql
-  - include:
-      file: liquibase/changesets/02_insert_roles_table.sql
-  - include:
-      file: liquibase/changesets/03_insert_users_table.sql
