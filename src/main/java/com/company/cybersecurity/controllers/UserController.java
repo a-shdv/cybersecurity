@@ -4,24 +4,21 @@ import com.company.cybersecurity.configs.CustomAuthenticationFailureHandler;
 import com.company.cybersecurity.dtos.ChangePasswordDto;
 import com.company.cybersecurity.dtos.RegistrationDto;
 import com.company.cybersecurity.exceptions.OldPasswordIsWrongException;
-import com.company.cybersecurity.exceptions.PasswordsMismatch;
+import com.company.cybersecurity.exceptions.PasswordsMismatchException;
 import com.company.cybersecurity.exceptions.UserAlreadyExistsException;
 import com.company.cybersecurity.models.User;
 import com.company.cybersecurity.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.web.WebAttributes;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -36,19 +33,22 @@ public class UserController {
         this.context = context;
     }
 
-//    @GetMapping("/login")
-//    public String login() {
-//        return "users/login";
-//    }
-
     @GetMapping("/login")
     public String login(Model model) {
         CustomAuthenticationFailureHandler handler = context.getBean(CustomAuthenticationFailureHandler.class);
         Exception ex = handler.getException();
         String message;
+
         if (ex != null && CustomAuthenticationFailureHandler.getFailureCount() != 0) {
-            message = ex.getLocalizedMessage();
-            model.addAttribute("message", message);
+            if (ex instanceof CredentialsExpiredException) {
+                message = "Срок действия пароля пользователя истек. Пожалуйста, смените пароль!";
+                model.addAttribute("expirationMessage", message);
+            }
+
+            if (ex instanceof BadCredentialsException) {
+                message = "Неверное имя пользователя или пароль!";
+                model.addAttribute("badCredentialsMessage", message);
+            }
         }
         return "users/login";
     }
@@ -61,7 +61,7 @@ public class UserController {
     @PostMapping("/registration")
     public String registration(@ModelAttribute("registrationDto") RegistrationDto dto, Model model) {
         User userFromDb = userService.findUserByUsername(dto.getUsername());
-        String message = null;
+        String message;
         try {
             boolean isPasswordsMatch = userService.isPasswordsMatch(dto.getPassword(), dto.getConfirmPassword());
             boolean isAlreadyExists = userService.isAlreadyExists(userFromDb);
@@ -69,8 +69,12 @@ public class UserController {
                 userService.saveUser(RegistrationDto.toUser(dto));
             }
             message = "Пользователь " + dto.getUsername() + " успешно создан!";
-        } catch (PasswordsMismatch | UserAlreadyExistsException e) {
-            message = e.getLocalizedMessage();
+        } catch (PasswordsMismatchException passwordMismatchException) {
+            message = "Пароли не совпадают!";
+            model.addAttribute("message", message);
+            return "users/registration";
+        } catch (UserAlreadyExistsException userAlreadyExistsException) {
+            message = "Такой пользователь уже существует!";
             model.addAttribute("message", message);
             return "users/registration";
         }
@@ -86,6 +90,18 @@ public class UserController {
         return "users/change-password";
     }
 
+    @GetMapping("/change-password-expired")
+    public String changePasswordExpired() {
+
+        return "users/change-password-expired";
+    }
+
+    @GetMapping("/change-username")
+    public String changeUsername() {
+
+        return "users/change-username";
+    }
+
     @PostMapping("/change-password")
     public String changePassword(@ModelAttribute("changePasswordDto") ChangePasswordDto dto, @AuthenticationPrincipal User user, Model model) {
         String message = null;
@@ -96,8 +112,14 @@ public class UserController {
                 userService.changePassword(user, dto.getNewPassword());
                 message = "Пароль изменен успешно!";
             }
-        } catch (OldPasswordIsWrongException | PasswordsMismatch e) {
-            message = e.getLocalizedMessage();
+        } catch (OldPasswordIsWrongException oldPasswordIsWrongException) {
+            message = "Старый пароль не верный!";
+            model.addAttribute("message", message);
+            return "users/registration";
+        } catch (PasswordsMismatchException passwordsMismatchException) {
+            message = "Пароли не совпадают!";
+            model.addAttribute("message", message);
+            return "users/registration";
         }
         model.addAttribute("message", message);
         return "users/change-password";

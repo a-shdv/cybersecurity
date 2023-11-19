@@ -29,10 +29,10 @@ public class WebSecurityConfiguration extends  WebSecurityConfigurerAdapter  {
         return new CustomAuthenticationFailureHandler();
     }
 
-    @Bean
-    public AuthenticationSuccessHandler authenticationSuccessHandler() {
-        return new CustomAuthenticationSuccessHandler();
-    }
+//    @Bean
+//    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+//        return new CustomAuthenticationSuccessHandler();
+//    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -49,7 +49,7 @@ public class WebSecurityConfiguration extends  WebSecurityConfigurerAdapter  {
                 .failureUrl("/login")
                 .failureHandler(authenticationFailureHandler())
                 .defaultSuccessUrl("/")
-                .successHandler(authenticationSuccessHandler())
+                // .successHandler(authenticationSuccessHandler())
                 .permitAll()
             .and()
             .logout()

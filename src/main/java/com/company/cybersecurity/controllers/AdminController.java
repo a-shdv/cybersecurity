@@ -1,8 +1,7 @@
 package com.company.cybersecurity.controllers;
 
-import com.company.cybersecurity.dtos.RegistrationDto;
 import com.company.cybersecurity.dtos.SaveUserDto;
-import com.company.cybersecurity.exceptions.PasswordsMismatch;
+import com.company.cybersecurity.exceptions.PasswordsMismatchException;
 import com.company.cybersecurity.exceptions.UserAlreadyExistsException;
 import com.company.cybersecurity.exceptions.UserNotFoundException;
 import com.company.cybersecurity.models.Role;
@@ -65,7 +64,7 @@ public class AdminController {
                 userService.saveUser(SaveUserDto.toUser(dto));
             }
             message = "Пользователь " + dto.getUsername() + " успешно создан!";
-        } catch (PasswordsMismatch | UserAlreadyExistsException e) {
+        } catch (PasswordsMismatchException | UserAlreadyExistsException e) {
             message = e.getLocalizedMessage();
         }
         model.addAttribute("message", message);

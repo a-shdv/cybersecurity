@@ -32,10 +32,10 @@
         <li><a th:href="@{/change-password}">Сменить пароль</a></li>
     </div>
 
-    <br>
 
     <!-- Администратор -->
     <div th:if="${user != null && user.getRoles().get(0).getAuthority().equals('ADMIN')}">
+        <br>
         <li><a th:href="@{/admin/users}">Пользователи</a></li>
     </div>
 

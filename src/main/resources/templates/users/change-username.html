@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Деканат: Сменить имя пользователя</title>
+</head>
+<body>
+<div th:if="${message != null}">
+    <div th:text="${message}"></div>
+</div>
+
+<form th:action="@{/change-password}" method="post" th:object="${changePasswordDto}">
+    <label for="oldPassword">Старый пароль</label>
+    <input type="password" name="oldPassword" id="oldPassword">
+    <br>
+    <label for="newPassword">Новый пароль</label>
+    <input type="password" name="newPassword" id="newPassword">
+    <br>
+    <label for="confirmPassword">Подтвердите пароль</label>
+    <input type="password" name="confirmPassword" id="confirmPassword">
+
+    <input type="submit" value="Сменить пароль">
+</form>
+</body>
+</html>

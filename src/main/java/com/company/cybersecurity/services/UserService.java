@@ -1,7 +1,7 @@
 package com.company.cybersecurity.services;
 
 import com.company.cybersecurity.exceptions.OldPasswordIsWrongException;
-import com.company.cybersecurity.exceptions.PasswordsMismatch;
+import com.company.cybersecurity.exceptions.PasswordsMismatchException;
 import com.company.cybersecurity.exceptions.UserAlreadyExistsException;
 import com.company.cybersecurity.exceptions.UserNotFoundException;
 import com.company.cybersecurity.models.Role;
@@ -87,9 +87,9 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
-    public boolean isPasswordsMatch(String password, String confirmPassword) throws PasswordsMismatch {
+    public boolean isPasswordsMatch(String password, String confirmPassword) throws PasswordsMismatchException {
         if (!password.equals(confirmPassword))
-            throw new PasswordsMismatch("Пароли не совпадают!");
+            throw new PasswordsMismatchException("Пароли не совпадают!");
         return true;
     }
 
