@@ -85,6 +85,19 @@ public class AdminController {
         return "admins/user-blocked";
     }
 
+    @GetMapping("/lock-name")
+    public String lockName(@RequestParam("userId") Long userId, Model model) {
+        try {
+            User userFromDb = userService.findUserById(userId);
+            userService.lockUser(userFromDb);
+            model.addAttribute("user", userFromDb);
+        } catch (UserNotFoundException e) {
+            e.getLocalizedMessage();
+        }
+        return "admins/user-blocked";
+    }
+
+
     @GetMapping("/unlock")
     public String unlock(@RequestParam("userId") Long userId, Model model) {
         try {

@@ -27,7 +27,9 @@
         <td th:if="${user.getEmail() != null}" th:text="${user.getEmail()}"></td>
         <td th:if="${user.getEmail() == null}">----</td>
         <!--Username-->
-        <td><a th:href="@{/admin/users/{id}(id=${user.getId()})}"><span th:text="${user.getUsername()}"></span></a></td>
+        <td><a th:href="@{/admin/users/{id}(id=${user.getId()})}"><span th:text="${user.getUsername()}"></span></a>
+            <a th:href="@{/admin/lock-name}">(Заблокировать)</a>
+        </td>
         <!--Account status-->
         <td th:text="${user.isAccountNonLocked()}"></td>
         <!--Actions-->

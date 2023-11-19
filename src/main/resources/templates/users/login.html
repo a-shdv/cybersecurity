@@ -9,10 +9,8 @@
 </head>
 <body>
 <h1>Авторизоваться</h1>
-
+<div th:if="${message}" th:text="${message}"></div>
 <form th:action="@{/login}" method="post">
-    <div class="alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
-    <br>
     <table>
         <tr>
             <!-- Имя пользователя -->

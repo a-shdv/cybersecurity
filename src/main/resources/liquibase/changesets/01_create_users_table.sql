@@ -4,6 +4,7 @@ create table users
     username              varchar(255) unique,
     email                 varchar(255) unique,
     password              varchar(255),
+    password_last_changed timestamp,
     is_account_non_locked boolean,
     primary key (id)
 );
