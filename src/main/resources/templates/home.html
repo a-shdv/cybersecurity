@@ -8,13 +8,14 @@
     <title>Деканат: Главная</title>
 </head>
 <body>
-<h1>home</h1>
+<h1>Главная страница</h1>
 <!--Error message-->
 <div th:if="${message != null}">
     <div th:text="${message}"></div>
 </div>
 
 <div th:text="${#authentication.name}"></div>
+
 <ul>
 
     <!-- Зарегистрироваться -->
@@ -32,11 +33,12 @@
         <li><a th:href="@{/change-password}">Сменить пароль</a></li>
     </div>
 
-    <br>
 
     <!-- Администратор -->
     <div th:if="${user != null && user.getRoles().get(0).getAuthority().equals('ADMIN')}">
+        <br>
         <li><a th:href="@{/admin/users}">Пользователи</a></li>
+        <li><a th:href="@{/admin/exit}">Завершить работу программы</a></li>
     </div>
 
     <br>

@@ -5,12 +5,10 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Деканат: Ошибка</title>
+    <title>Деканат: Блокировка</title>
 </head>
 <body>
-    <h2>Что-то пошло не так...</h2>
-    <div class="alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
-    <br>
-    <button onclick="history.back()">Вернуться</button>
+<div>Пользователю запрещено использовать имя: <b><span th:text="${user.getUsername()}"></span></b>!</div>
+<button onclick="history.back()">Вернуться</button>
 </body>
 </html>

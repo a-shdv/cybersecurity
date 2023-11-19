@@ -1,7 +1,7 @@
 package com.company.cybersecurity.services;
 
 import com.company.cybersecurity.exceptions.OldPasswordIsWrongException;
-import com.company.cybersecurity.exceptions.PasswordsMismatch;
+import com.company.cybersecurity.exceptions.PasswordsMismatchException;
 import com.company.cybersecurity.exceptions.UserAlreadyExistsException;
 import com.company.cybersecurity.exceptions.UserNotFoundException;
 import com.company.cybersecurity.models.Role;
@@ -12,10 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.crypto.*;
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -24,24 +31,36 @@ import java.util.Optional;
 @Slf4j
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostConstruct
-    private void postConstruct() {
-        User user = Optional.ofNullable(userRepository.findByUsername("user")).orElse(new User("user", bCryptPasswordEncoder.encode("user")));
+    private void postConstruct() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, InvalidKeyException, NoSuchPaddingException {
+        User user = Optional.ofNullable(userRepository.findByUsername("user")).orElse(new User("user", "user@user.com", passwordEncoder.encode("user")));
         user.setRoles(Collections.singletonList(Role.USER));
+        user.setPasswordLastChanged(LocalDateTime.now());
 
-        User admin = Optional.ofNullable(userRepository.findByUsername("admin")).orElse(new User("admin", bCryptPasswordEncoder.encode("admin")));
+        User admin = Optional.ofNullable(userRepository.findByUsername("admin")).orElse(new User("admin", "admin@admin.com", passwordEncoder.encode("admin")));
         admin.setRoles(Collections.singletonList(Role.ADMIN));
+        admin.setPasswordLastChanged(LocalDateTime.now());
 
         userRepository.save(user);
         userRepository.save(admin);
+
+        // Создание файла
+//        String content = findAllUsers().stream()
+//                .sorted(Comparator.comparing(User::getId))
+//                .map(User::toString)
+//                .collect(Collectors.joining(System.lineSeparator()));
+
+
+//        Path path = Paths.get("users.txt");
+//        Files.write(path, content.getBytes());
     }
 
 
@@ -50,7 +69,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден!"));
     }
 
-    public User findUserByUsername(String username) {
+    public User findUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username);
     }
 
@@ -66,7 +85,8 @@ public class UserService implements UserDetailsService {
     }
 
     public void saveUser(User user) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPasswordLastChanged(LocalDateTime.now());
         user.setAccountNonLocked(true);
         user.setRoles(Collections.singletonList(Role.USER));
         userRepository.save(user);
@@ -84,21 +104,27 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
-    public boolean isPasswordsMatch(String password, String confirmPassword) throws PasswordsMismatch {
+    public boolean isPasswordsMatch(String password, String confirmPassword) throws PasswordsMismatchException {
         if (!password.equals(confirmPassword))
-            throw new PasswordsMismatch("Пароли не совпадают!");
+            throw new PasswordsMismatchException("Пароли не совпадают!");
         return true;
     }
 
-    public boolean isOldPasswordRight(String password, String oldPassword) throws OldPasswordIsWrongException {
-        if (!bCryptPasswordEncoder.matches(password, oldPassword)) {
+    public boolean isOldPasswordRight(String oldPassword, User user) throws OldPasswordIsWrongException {
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             throw new OldPasswordIsWrongException("Старый пароль не верный!");
         }
         return true;
     }
 
-    public void changePassword(User user, String newPassword) {
-        user.setPassword(bCryptPasswordEncoder.encode(newPassword));
+    public void changeUsername(String newUsername, User user) {
+        user.setUsername(newUsername);
+        userRepository.save(user);
+    }
+
+    public void changePassword(String newPassword, User user) {
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setPasswordLastChanged(LocalDateTime.now());
         userRepository.save(user);
     }
 
@@ -110,6 +136,22 @@ public class UserService implements UserDetailsService {
     public void unlockUser(User user) {
         user.setAccountNonLocked(true);
         userRepository.save(user);
+    }
+
+    public void disableByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        user.setEnabled(false);
+        userRepository.save(user);
+    }
+
+    public void enableByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        user.setEnabled(true);
+        userRepository.save(user);
+    }
+
+    public User findUserByEmail(String email) throws UserNotFoundException {
+        return userRepository.findByEmail(email);
     }
 
     @Override

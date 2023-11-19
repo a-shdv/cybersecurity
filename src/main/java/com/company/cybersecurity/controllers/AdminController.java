@@ -1,8 +1,7 @@
 package com.company.cybersecurity.controllers;
 
-import com.company.cybersecurity.dtos.RegistrationDto;
 import com.company.cybersecurity.dtos.SaveUserDto;
-import com.company.cybersecurity.exceptions.PasswordsMismatch;
+import com.company.cybersecurity.exceptions.PasswordsMismatchException;
 import com.company.cybersecurity.exceptions.UserAlreadyExistsException;
 import com.company.cybersecurity.exceptions.UserNotFoundException;
 import com.company.cybersecurity.models.Role;
@@ -10,6 +9,7 @@ import com.company.cybersecurity.models.User;
 import com.company.cybersecurity.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -65,7 +65,7 @@ public class AdminController {
                 userService.saveUser(SaveUserDto.toUser(dto));
             }
             message = "Пользователь " + dto.getUsername() + " успешно создан!";
-        } catch (PasswordsMismatch | UserAlreadyExistsException e) {
+        } catch (PasswordsMismatchException | UserAlreadyExistsException e) {
             message = e.getLocalizedMessage();
         }
         model.addAttribute("message", message);
@@ -97,4 +97,32 @@ public class AdminController {
         return "admins/user-unblocked";
     }
 
+    @GetMapping("/enable-by-username")
+    public String enableByUsername(@RequestParam("username") String username, Model model) {
+        try {
+            User userFromDb = userService.findUserByUsername(username);
+            userService.enableByUsername(userFromDb.getUsername());
+            model.addAttribute("user", userFromDb);
+        } catch (UsernameNotFoundException e) {
+            e.getLocalizedMessage();
+        }
+        return "admins/user-enabled";
+    }
+
+    @GetMapping("/disable-by-username")
+    public String disableByUsername(@RequestParam("username") String username, Model model) {
+        try {
+            User userFromDb = userService.findUserByUsername(username);
+            userService.disableByUsername(userFromDb.getUsername());
+            model.addAttribute("user", userFromDb);
+        } catch (UsernameNotFoundException e) {
+            e.getLocalizedMessage();
+        }
+        return "admins/user-disabled";
+    }
+
+    @GetMapping("/exit")
+    public void exit() {
+        System.exit(0);
+    }
 }
