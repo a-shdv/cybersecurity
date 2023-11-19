@@ -38,6 +38,7 @@
     <div th:if="${user != null && user.getRoles().get(0).getAuthority().equals('ADMIN')}">
         <br>
         <li><a th:href="@{/admin/users}">Пользователи</a></li>
+        <li><a th:href="@{/admin/exit}">Завершить работу программы</a></li>
     </div>
 
     <br>

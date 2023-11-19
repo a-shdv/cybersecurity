@@ -97,6 +97,17 @@ public class AdminController {
         return "admins/user-unblocked";
     }
 
+    @GetMapping("/enable-by-username")
+    public String enableByUsername(@RequestParam("username") String username, Model model) {
+        try {
+            User userFromDb = userService.findUserByUsername(username);
+            userService.enableByUsername(userFromDb.getUsername());
+            model.addAttribute("user", userFromDb);
+        } catch (UsernameNotFoundException e) {
+            e.getLocalizedMessage();
+        }
+        return "admins/user-enabled";
+    }
 
     @GetMapping("/disable-by-username")
     public String disableByUsername(@RequestParam("username") String username, Model model) {
@@ -110,15 +121,8 @@ public class AdminController {
         return "admins/user-disabled";
     }
 
-    @GetMapping("/enable-by-username")
-    public String enableByUsername(@RequestParam("username") String username, Model model) {
-        try {
-            User userFromDb = userService.findUserByUsername(username);
-            userService.enableByUsername(userFromDb.getUsername());
-            model.addAttribute("user", userFromDb);
-        } catch (UsernameNotFoundException e) {
-            e.getLocalizedMessage();
-        }
-        return "admins/user-enabled";
+    @GetMapping("/exit")
+    public void exit() {
+        System.exit(0);
     }
 }
