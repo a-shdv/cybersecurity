@@ -51,9 +51,9 @@ public class UserController {
                 model.addAttribute("badCredentialsMessage", message);
             }
         }
+
         return "users/login";
     }
-
     @GetMapping("/registration")
     public String registration() {
         return "users/registration";
