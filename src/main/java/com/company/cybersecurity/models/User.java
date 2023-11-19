@@ -36,6 +36,8 @@ public class User implements UserDetails {
 
     private boolean isAccountNonLocked = true;
 
+    private boolean isEnabled = true;
+
     private LocalDateTime passwordLastChanged;
 
     @Enumerated(EnumType.STRING)
@@ -75,6 +77,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+
+        return isEnabled;
     }
 }

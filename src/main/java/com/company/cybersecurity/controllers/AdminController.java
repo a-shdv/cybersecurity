@@ -9,6 +9,7 @@ import com.company.cybersecurity.models.User;
 import com.company.cybersecurity.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -84,19 +85,6 @@ public class AdminController {
         return "admins/user-blocked";
     }
 
-    @GetMapping("/lock-name")
-    public String lockName(@RequestParam("userId") Long userId, Model model) {
-        try {
-            User userFromDb = userService.findUserById(userId);
-            userService.lockUser(userFromDb);
-            model.addAttribute("user", userFromDb);
-        } catch (UserNotFoundException e) {
-            e.getLocalizedMessage();
-        }
-        return "admins/user-blocked";
-    }
-
-
     @GetMapping("/unlock")
     public String unlock(@RequestParam("userId") Long userId, Model model) {
         try {
@@ -109,4 +97,28 @@ public class AdminController {
         return "admins/user-unblocked";
     }
 
+
+    @GetMapping("/disable-by-username")
+    public String disableByUsername(@RequestParam("username") String username, Model model) {
+        try {
+            User userFromDb = userService.findUserByUsername(username);
+            userService.disableByUsername(userFromDb.getUsername());
+            model.addAttribute("user", userFromDb);
+        } catch (UsernameNotFoundException e) {
+            e.getLocalizedMessage();
+        }
+        return "admins/user-disabled";
+    }
+
+    @GetMapping("/enable-by-username")
+    public String enableByUsername(@RequestParam("username") String username, Model model) {
+        try {
+            User userFromDb = userService.findUserByUsername(username);
+            userService.enableByUsername(userFromDb.getUsername());
+            model.addAttribute("user", userFromDb);
+        } catch (UsernameNotFoundException e) {
+            e.getLocalizedMessage();
+        }
+        return "admins/user-enabled";
+    }
 }

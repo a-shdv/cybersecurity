@@ -52,7 +52,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден!"));
     }
 
-    public User findUserByUsername(String username) {
+    public User findUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username);
     }
 
@@ -100,6 +100,11 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
+    public void changeUsername(String newUsername, User user) {
+        user.setUsername(newUsername);
+        userRepository.save(user);
+    }
+
     public void changePassword(String newPassword, User user) {
         user.setPassword(bCryptPasswordEncoder.encode(newPassword));
         user.setPasswordLastChanged(LocalDateTime.now());
@@ -116,7 +121,19 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public User findByEmail(String email) {
+    public void disableByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        user.setEnabled(false);
+        userRepository.save(user);
+    }
+
+    public void enableByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        user.setEnabled(true);
+        userRepository.save(user);
+    }
+
+    public User findUserByEmail(String email) throws UserNotFoundException {
         return userRepository.findByEmail(email);
     }
 

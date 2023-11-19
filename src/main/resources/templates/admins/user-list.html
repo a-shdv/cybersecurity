@@ -14,8 +14,9 @@
         <th>Id</th>
         <th>Электронная почта</th>
         <th>Имя пользователя</th>
-        <th>Активен</th>
-        <th>Действие</th>
+        <th>Запретить имя пользователя</th>
+        <th>Статус аккаунта</th>
+        <th>Заблокировать аккаунт</th>
     </tr>
     </thead>
     <tbody>
@@ -27,8 +28,14 @@
         <td th:if="${user.getEmail() != null}" th:text="${user.getEmail()}"></td>
         <td th:if="${user.getEmail() == null}">----</td>
         <!--Username-->
-        <td><a th:href="@{/admin/users/{id}(id=${user.getId()})}"><span th:text="${user.getUsername()}"></span></a>
-            <a th:href="@{/admin/lock-name}">(Заблокировать)</a>
+        <td>
+            <a th:href="@{/admin/users/{id}(id=${user.getId()})}"><span th:text="${user.getUsername()}"></span></a>
+            (<span th:text="${user.isEnabled()}"></span>)
+        </td>
+        <!--Disable username-->
+        <td>
+            <a th:href="@{/admin/disable-by-username(username=${user.getUsername()})}">(Запретить)</a>    |
+            <a th:href="@{/admin/enable-by-username(username=${user.getUsername()})}">(Разрешить)</a>
         </td>
         <!--Account status-->
         <td th:text="${user.isAccountNonLocked()}"></td>

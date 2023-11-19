@@ -3,16 +3,19 @@ package com.company.cybersecurity.controllers;
 import com.company.cybersecurity.configs.CustomAuthenticationFailureHandler;
 import com.company.cybersecurity.dtos.ChangePasswordDto;
 import com.company.cybersecurity.dtos.ChangePasswordExpiredDto;
+import com.company.cybersecurity.dtos.ChangeUsernameDto;
 import com.company.cybersecurity.dtos.RegistrationDto;
 import com.company.cybersecurity.exceptions.OldPasswordIsWrongException;
 import com.company.cybersecurity.exceptions.PasswordsMismatchException;
 import com.company.cybersecurity.exceptions.UserAlreadyExistsException;
+import com.company.cybersecurity.exceptions.UserNotFoundException;
 import com.company.cybersecurity.models.User;
 import com.company.cybersecurity.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,10 +53,16 @@ public class UserController {
                 message = "Неверное имя пользователя или пароль!";
                 model.addAttribute("badCredentialsMessage", message);
             }
+
+            if (ex instanceof DisabledException) {
+                message = "Ваше имя пользователя не проходит правила модерации. Пожалуйста, смените имя пользователя!";
+                model.addAttribute("disabledMessage", message);
+            }
         }
 
         return "users/login";
     }
+
     @GetMapping("/registration")
     public String registration() {
         return "users/registration";
@@ -98,10 +107,11 @@ public class UserController {
 
     @PostMapping("/change-password-expired")
     public String changePasswordExpired(@ModelAttribute("changePasswordExpiredDto") ChangePasswordExpiredDto dto, Model model) {
-        User user = userService.findByEmail(dto.getEmail());
+        User user;
 
         String message = null;
         try {
+            user = userService.findUserByEmail(dto.getEmail());
             boolean isPasswordsMatch = userService.isPasswordsMatch(dto.getNewPassword(), dto.getConfirmPassword());
             boolean isOldPasswordRight = userService.isOldPasswordRight(dto.getOldPassword(), user);
             if (isPasswordsMatch && isOldPasswordRight) {
@@ -116,6 +126,10 @@ public class UserController {
             message = "Пароли не совпадают!";
             model.addAttribute("message", message);
             return "users/change-password-expired";
+        } catch (UserNotFoundException userNotFoundException) {
+            message = "Пользователь не найден!";
+            model.addAttribute("message", message);
+            return "users/change-password-expired";
         }
 
         model.addAttribute("message", message);
@@ -124,6 +138,23 @@ public class UserController {
 
     @GetMapping("/change-username")
     public String changeUsername() {
+        return "users/change-username";
+    }
+
+    @PostMapping("/change-username")
+    public String changeUsername(@ModelAttribute("changeUsernameDto") ChangeUsernameDto dto, Model model) {
+        String message;
+        User userFromDb;
+        try {
+            userFromDb = userService.findUserByEmail(dto.getEmail());
+            userService.changeUsername(dto.getNewUsername(), userFromDb);
+            userService.enableByUsername(userFromDb.getUsername());
+            message = "Имя пользователя успешно изменено!";
+            model.addAttribute("message", message);
+        } catch (UserNotFoundException e) {
+            message = "Пользователь не найден!";
+            model.addAttribute("message", message);
+        }
 
         return "users/change-username";
     }

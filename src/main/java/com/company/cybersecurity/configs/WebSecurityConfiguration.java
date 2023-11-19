@@ -41,7 +41,7 @@ public class WebSecurityConfiguration extends  WebSecurityConfigurerAdapter  {
                 .disable()
             .authorizeRequests()
                 .antMatchers("/", "/login", "/resources/**", "/registration",
-                        "/change-password-expired")
+                        "/change-password-expired", "/change-username")
                 .permitAll()
             .anyRequest().authenticated()
             .and()
