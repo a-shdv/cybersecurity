@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -26,6 +27,11 @@ public class WebSecurityConfiguration extends  WebSecurityConfigurerAdapter  {
     @Bean
     public AuthenticationFailureHandler authenticationFailureHandler() {
         return new CustomAuthenticationFailureHandler();
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new CustomAuthenticationSuccessHandler();
     }
 
     @Override
@@ -43,6 +49,7 @@ public class WebSecurityConfiguration extends  WebSecurityConfigurerAdapter  {
                 .failureUrl("/login")
                 .failureHandler(authenticationFailureHandler())
                 .defaultSuccessUrl("/")
+                .successHandler(authenticationSuccessHandler())
                 .permitAll()
             .and()
             .logout()
