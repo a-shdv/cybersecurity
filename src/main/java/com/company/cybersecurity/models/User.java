@@ -19,6 +19,7 @@ import java.util.List;
 @Setter
 @RequiredArgsConstructor
 @AllArgsConstructor
+@ToString
 @EqualsAndHashCode(exclude = {"password", "isAccountNonLocked", "roles"})
 public class User implements UserDetails {
     @Id
@@ -45,8 +46,9 @@ public class User implements UserDetails {
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     private List<Role> roles = new ArrayList<>();
 
-    public User(String username, String password) {
+    public User(String username, String email, String password) {
         this.username = username;
+        this.email = email;
         this.password = password;
     }
 

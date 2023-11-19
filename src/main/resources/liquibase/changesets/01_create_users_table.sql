@@ -6,6 +6,6 @@ create table users
     password              varchar(255),
     password_last_changed timestamp,
     is_account_non_locked boolean,
-    is_enabled boolean,
+    is_enabled            boolean,
     primary key (id)
 );
