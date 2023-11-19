@@ -23,10 +23,10 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        failureCount++;
-        if (failureCount >= 3) {
-            System.exit(0);
-        }
+//        failureCount++;
+//        if (failureCount >= 3) {
+//            System.exit(0);
+//        }
 
         this.exception = exception;
 

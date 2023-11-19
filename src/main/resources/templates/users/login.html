@@ -10,7 +10,8 @@
 <body>
 <h1>Авторизоваться</h1>
 <!--Password expired-->
-<div th:if="${expirationMessage}" th:text="${expirationMessage}">
+<div th:if="${expirationMessage != null}">
+    <span th:text="${expirationMessage}"></span>
     <a th:href="@{/change-password-expired}">Сменить пароль</a>
 </div>
 

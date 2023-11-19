@@ -93,14 +93,14 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
-    public boolean isOldPasswordRight(String password, String oldPassword) throws OldPasswordIsWrongException {
-        if (!bCryptPasswordEncoder.matches(password, oldPassword)) {
+    public boolean isOldPasswordRight(String oldPassword, User user) throws OldPasswordIsWrongException {
+        if (!bCryptPasswordEncoder.matches(oldPassword, user.getPassword())) {
             throw new OldPasswordIsWrongException("Старый пароль не верный!");
         }
         return true;
     }
 
-    public void changePassword(User user, String newPassword) {
+    public void changePassword(String newPassword, User user) {
         user.setPassword(bCryptPasswordEncoder.encode(newPassword));
         user.setPasswordLastChanged(LocalDateTime.now());
         userRepository.save(user);
@@ -114,6 +114,10 @@ public class UserService implements UserDetailsService {
     public void unlockUser(User user) {
         user.setAccountNonLocked(true);
         userRepository.save(user);
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override

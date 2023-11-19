@@ -67,7 +67,7 @@ public class User implements UserDetails {
     public boolean isCredentialsNonExpired() {
         if (passwordLastChanged != null) {
             LocalDateTime now = LocalDateTime.now();
-            long daysSinceLastChange = ChronoUnit.SECONDS.between(passwordLastChanged, now);
+            long daysSinceLastChange = ChronoUnit.DAYS.between(passwordLastChanged, now);
             return daysSinceLastChange <= 30;
         }
         return true;

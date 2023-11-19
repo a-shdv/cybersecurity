@@ -40,7 +40,8 @@ public class WebSecurityConfiguration extends  WebSecurityConfigurerAdapter  {
             .csrf()
                 .disable()
             .authorizeRequests()
-                .antMatchers("/", "/resources/**", "/registration")
+                .antMatchers("/", "/resources/**", "/registration",
+                        "/change-password-expired")
                 .permitAll()
             .anyRequest().authenticated()
             .and()
@@ -49,6 +50,7 @@ public class WebSecurityConfiguration extends  WebSecurityConfigurerAdapter  {
                 .failureUrl("/login")
                 .failureHandler(authenticationFailureHandler())
                 .defaultSuccessUrl("/")
+                .successForwardUrl("/")
                 // .successHandler(authenticationSuccessHandler())
                 .permitAll()
             .and()

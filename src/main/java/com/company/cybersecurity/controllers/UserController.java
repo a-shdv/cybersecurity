@@ -2,6 +2,7 @@ package com.company.cybersecurity.controllers;
 
 import com.company.cybersecurity.configs.CustomAuthenticationFailureHandler;
 import com.company.cybersecurity.dtos.ChangePasswordDto;
+import com.company.cybersecurity.dtos.ChangePasswordExpiredDto;
 import com.company.cybersecurity.dtos.RegistrationDto;
 import com.company.cybersecurity.exceptions.OldPasswordIsWrongException;
 import com.company.cybersecurity.exceptions.PasswordsMismatchException;
@@ -39,7 +40,7 @@ public class UserController {
         Exception ex = handler.getException();
         String message;
 
-        if (ex != null && CustomAuthenticationFailureHandler.getFailureCount() != 0) {
+        if (ex != null) {
             if (ex instanceof CredentialsExpiredException) {
                 message = "Срок действия пароля пользователя истек. Пожалуйста, смените пароль!";
                 model.addAttribute("expirationMessage", message);
@@ -92,8 +93,33 @@ public class UserController {
 
     @GetMapping("/change-password-expired")
     public String changePasswordExpired() {
-
         return "users/change-password-expired";
+    }
+
+    @PostMapping("/change-password-expired")
+    public String changePasswordExpired(@ModelAttribute("changePasswordExpiredDto") ChangePasswordExpiredDto dto, Model model) {
+        User user = userService.findByEmail(dto.getEmail());
+
+        String message = null;
+        try {
+            boolean isPasswordsMatch = userService.isPasswordsMatch(dto.getNewPassword(), dto.getConfirmPassword());
+            boolean isOldPasswordRight = userService.isOldPasswordRight(dto.getOldPassword(), user);
+            if (isPasswordsMatch && isOldPasswordRight) {
+                userService.changePassword(dto.getNewPassword(), user);
+                message = "Пароль изменен успешно!";
+            }
+        } catch (OldPasswordIsWrongException oldPasswordIsWrongException) {
+            message = "Старый пароль не верный!";
+            model.addAttribute("message", message);
+            return "users/change-password-expired";
+        } catch (PasswordsMismatchException passwordsMismatchException) {
+            message = "Пароли не совпадают!";
+            model.addAttribute("message", message);
+            return "users/change-password-expired";
+        }
+
+        model.addAttribute("message", message);
+        return "home";
     }
 
     @GetMapping("/change-username")
@@ -107,9 +133,9 @@ public class UserController {
         String message = null;
         try {
             boolean isPasswordsMatch = userService.isPasswordsMatch(dto.getNewPassword(), dto.getConfirmPassword());
-            boolean isOldPasswordRight = userService.isOldPasswordRight(dto.getNewPassword(), dto.getOldPassword());
+            boolean isOldPasswordRight = userService.isOldPasswordRight(dto.getOldPassword(), user);
             if (isPasswordsMatch && isOldPasswordRight) {
-                userService.changePassword(user, dto.getNewPassword());
+                userService.changePassword(dto.getNewPassword(), user);
                 message = "Пароль изменен успешно!";
             }
         } catch (OldPasswordIsWrongException oldPasswordIsWrongException) {
