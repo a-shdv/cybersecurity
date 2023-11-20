@@ -7,6 +7,7 @@ import com.company.cybersecurity.exceptions.UserNotFoundException;
 import com.company.cybersecurity.models.Role;
 import com.company.cybersecurity.models.User;
 import com.company.cybersecurity.repos.UserRepository;
+import com.company.cybersecurity.security.AESUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,14 +19,19 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.crypto.*;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -40,7 +46,7 @@ public class UserService implements UserDetailsService {
     }
 
     @PostConstruct
-    private void postConstruct() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, InvalidKeyException, NoSuchPaddingException {
+    private void postConstruct() throws Exception {
         User user = Optional.ofNullable(userRepository.findByUsername("user")).orElse(new User("user", "user@user.com", passwordEncoder.encode("user")));
         user.setRoles(Collections.singletonList(Role.USER));
         user.setPasswordLastChanged(LocalDateTime.now());
@@ -51,16 +57,6 @@ public class UserService implements UserDetailsService {
 
         userRepository.save(user);
         userRepository.save(admin);
-
-        // Создание файла
-//        String content = findAllUsers().stream()
-//                .sorted(Comparator.comparing(User::getId))
-//                .map(User::toString)
-//                .collect(Collectors.joining(System.lineSeparator()));
-
-
-//        Path path = Paths.get("users.txt");
-//        Files.write(path, content.getBytes());
     }
 
 
