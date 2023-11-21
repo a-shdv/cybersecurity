@@ -5,6 +5,8 @@ import com.company.cybersecurity.security.AESUtil;
 import com.company.cybersecurity.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationContextInitializedEvent;
+import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextStartedEvent;
@@ -25,12 +27,8 @@ import java.util.stream.Collectors;
 public class Init {
     private final UserService userService;
     private final AESUtil aesUtil;
-    private final String encryptedFilePath = System.getProperty("user.dir") + "/users-credentials";
-    private final String decryptedFilePath = System.getProperty("user.dir") + "/.tmp";
-
-    private Path permFile;
-    private Path tempFile;
-
+    final static String encryptedFilePath = System.getProperty("user.dir") + "/users-credentials.txt";
+    final static String decryptedFilePath = System.getProperty("user.dir") + "/temp.txt";
 
     @Autowired
     public Init(UserService userService, AESUtil aesUtil) {
@@ -39,7 +37,8 @@ public class Init {
     }
 
     @EventListener(ApplicationReadyEvent.class)
-    public void run() {
+    public void run() throws IOException {
+        /*Get users credentials*/
         String content = userService.findAllUsers()
                 .stream()
                 .sorted(Comparator.comparing(User::getId))
@@ -48,6 +47,8 @@ public class Init {
 
         String encryptedContent = null;
         String decryptedContent = null;
+
+        /*Encryption and decryption*/
         try {
             encryptedContent = aesUtil.encrypt(content);
             decryptedContent = aesUtil.decrypt(encryptedContent);
@@ -55,9 +56,16 @@ public class Init {
             log.error(e.getMessage());
         }
 
+        File encryptedFile = new File(encryptedFilePath);
+        File decryptedFile = new File(decryptedFilePath);
+
+        encryptedFile.createNewFile();
+        decryptedFile.createNewFile();
+
         /*Perm file*/
         try (FileWriter writer = new FileWriter(encryptedFilePath)) {
             writer.write(encryptedContent);
+            writer.flush();
         } catch (IOException e) {
             log.error(e.getMessage());
         }
@@ -65,8 +73,11 @@ public class Init {
         /*Temp file*/
         try (FileWriter writer = new FileWriter(decryptedFilePath)) {
             writer.write(decryptedContent);
+            writer.flush();
         } catch (IOException e) {
             log.error(e.getMessage());
         }
+
+        decryptedFile.deleteOnExit();
     }
 }
