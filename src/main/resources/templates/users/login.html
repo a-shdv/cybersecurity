@@ -13,7 +13,8 @@
 <div th:if="${expirationMessage != null}" id="expirationMessage">
     <span th:text="${expirationMessage}"></span>
     <br>
-    <a th:href="@{/change-password-expired}">Сменить пароль</a>
+    <a th:href="@{/change-password-expired}">Сменить пароль</a> <br> <br>
+    <a th:href="@{/change-password-decline}">Отказываюсь менять свой пароль</a>
 </div>
 
 <!--Bad credentials-->
@@ -25,7 +26,8 @@
     <span th:text="${disabledMessage}"></span>
     <br>
     <a th:href="@{/change-username}">Сменить имя пользователя</a> <br>
-    <a th:href="@{/change-password-expired}">Сменить пароль</a>
+    <a th:href="@{/change-password-expired}">Сменить пароль</a> <br> <br>
+    <a th:href="@{/change-password-decline}">Отказываюсь менять свой пароль</a>
 </div>
 
 <form th:action="@{/login}" method="post">

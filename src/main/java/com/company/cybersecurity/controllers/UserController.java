@@ -5,6 +5,7 @@ import com.company.cybersecurity.dtos.*;
 import com.company.cybersecurity.exceptions.*;
 import com.company.cybersecurity.models.User;
 import com.company.cybersecurity.services.UserService;
+import liquibase.pro.packaged.S;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -164,6 +165,11 @@ public class UserController {
         return "users/change-username";
     }
 
+    @GetMapping("/change-password-decline")
+    public void changePasswordDecline() {
+        System.exit(0);
+    }
+
     @PostMapping("/change-password")
     public String changePassword(@ModelAttribute("changePasswordDto") ChangePasswordDto dto, @AuthenticationPrincipal User user, Model model) {
         String message = null;
@@ -185,10 +191,14 @@ public class UserController {
         } catch (WrongPasswordFormatException e) {
             message = "Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть > 3-х символов!";
             model.addAttribute("message", message);
-            return "users/registration";        }
+            return "users/registration";
+        }
         model.addAttribute("message", message);
         return "users/change-password";
     }
 
-
+    @GetMapping("/about-us")
+    public String aboutUs() {
+        return "about-us";
+    }
 }
