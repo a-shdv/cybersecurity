@@ -149,25 +149,12 @@ public class UserService implements UserDetailsService {
     public void restrictPasswordCharacters(User user) throws WrongPasswordFormatException {
         user.setPasswordNotRestricted(false);
         userRepository.save(user);
-//        try (FileReader fileReader = new FileReader(Init.decryptedFilePath);
-//             BufferedReader bufferedReader = new BufferedReader(fileReader)) {
-//            String line = null;
-//            String password;
-//            while ((line = bufferedReader.readLine()) != null) {
-//                int startIndex = line.indexOf("password=");
-//                int endIndex = line.indexOf(",", startIndex);
-//                String passwordLine = line.substring(startIndex + 9, endIndex);
-//            }
-//        } catch (
-//                Exception e) {
-//            e.getMessage();
-//        }
     }
 
-//        if (passwordEncoder.matches(rawPassword, encodedPassword)) {
-//
-//        }
-
+    public void unrestrictPasswordCharacters(User user) {
+        user.setPasswordNotRestricted(true);
+        userRepository.save(user);
+    }
 
     private boolean checkRegexp(String password) {
         Pattern pattern = Pattern.compile(regex);

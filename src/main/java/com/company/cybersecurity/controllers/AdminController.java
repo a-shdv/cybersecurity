@@ -138,11 +138,18 @@ public class AdminController {
         return "admins/user-restrict-password-characters";
     }
 
-//    @GetMapping("/unrestrict-password-characters")
-//    public String unrestrictPasswordCharacters(@RequestParam("id") Long id, Model model) {
-//
-//
-//    }
+    @GetMapping("/unrestrict-password-characters")
+    public String unrestrictPasswordCharacters(@RequestParam("id") Long id, Model model) throws UserNotFoundException {
+        try {
+            User user = userService.findUserById(id);
+            userService.unrestrictPasswordCharacters(user);
+            model.addAttribute("user", user);
+        } catch (UserNotFoundException e) {
+            throw new UserNotFoundException("Username with id " + id + " was not found!");
+        }
+        return "admins/user-unrestrict-password-characters";
+
+    }
 
     @GetMapping("/exit")
     public void exit() {
