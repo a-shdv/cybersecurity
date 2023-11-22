@@ -41,6 +41,8 @@ public class User implements UserDetails {
 
     private LocalDateTime passwordLastChanged;
 
+    private boolean isPasswordNotRestricted = true;
+
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "user_id"))
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
@@ -69,16 +71,32 @@ public class User implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
+//        if (isPasswordRestricted) {
+//            return false;
+//        }
         if (passwordLastChanged != null) {
             LocalDateTime now = LocalDateTime.now();
             long daysSinceLastChange = ChronoUnit.DAYS.between(passwordLastChanged, now);
             return daysSinceLastChange <= 30;
         }
+
         return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return isEnabled;
+        if (!isEnabled)
+            return false;
+        if (!isPasswordNotRestricted)
+            return false;
+        return true;
+    }
+
+    public boolean isPasswordNotRestricted() {
+        return isPasswordNotRestricted;
+    }
+
+    public void setPasswordNotRestricted(boolean passwordNotRestricted) {
+        this.isPasswordNotRestricted = passwordNotRestricted;
     }
 }

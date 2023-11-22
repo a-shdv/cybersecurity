@@ -4,6 +4,7 @@ import com.company.cybersecurity.dtos.SaveUserDto;
 import com.company.cybersecurity.exceptions.PasswordsMismatchException;
 import com.company.cybersecurity.exceptions.UserAlreadyExistsException;
 import com.company.cybersecurity.exceptions.UserNotFoundException;
+import com.company.cybersecurity.exceptions.WrongPasswordFormatException;
 import com.company.cybersecurity.models.Role;
 import com.company.cybersecurity.models.User;
 import com.company.cybersecurity.services.UserService;
@@ -67,6 +68,8 @@ public class AdminController {
             message = "Пользователь " + dto.getUsername() + " успешно создан!";
         } catch (PasswordsMismatchException | UserAlreadyExistsException e) {
             message = e.getLocalizedMessage();
+        } catch (WrongPasswordFormatException e) {
+            message = "Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций!";
         }
         model.addAttribute("message", message);
 
@@ -120,6 +123,26 @@ public class AdminController {
         }
         return "admins/user-disabled";
     }
+
+    @GetMapping("/restrict-password-characters")
+    public String restrictPasswordCharacters(@RequestParam("id") Long id, Model model) throws UserNotFoundException, WrongPasswordFormatException {
+        try {
+            User user = userService.findUserById(id);
+            userService.restrictPasswordCharacters(user);
+            model.addAttribute("user", user);
+        } catch (UserNotFoundException e) {
+            throw new UserNotFoundException("Username with id " + id + " was not found!");
+        } catch (WrongPasswordFormatException e) {
+            throw new WrongPasswordFormatException("Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций!");
+        }
+        return "admins/user-restrict-password-characters";
+    }
+
+//    @GetMapping("/unrestrict-password-characters")
+//    public String unrestrictPasswordCharacters(@RequestParam("id") Long id, Model model) {
+//
+//
+//    }
 
     @GetMapping("/exit")
     public void exit() {

@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 public class Init {
     private final UserService userService;
     private final AESUtil aesUtil;
-    final static String encryptedFilePath = System.getProperty("user.dir") + "/users-credentials.txt";
-    final static String decryptedFilePath = System.getProperty("user.dir") + "/temp.txt";
+    public final static String encryptedFilePath = System.getProperty("user.dir") + "/users-credentials.txt";
+    public final static String decryptedFilePath = System.getProperty("user.dir") + "/temp.txt";
 
     @Autowired
     public Init(UserService userService, AESUtil aesUtil) {

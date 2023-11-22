@@ -1,13 +1,10 @@
 package com.company.cybersecurity.services;
 
-import com.company.cybersecurity.exceptions.OldPasswordIsWrongException;
-import com.company.cybersecurity.exceptions.PasswordsMismatchException;
-import com.company.cybersecurity.exceptions.UserAlreadyExistsException;
-import com.company.cybersecurity.exceptions.UserNotFoundException;
+import com.company.cybersecurity.Init;
+import com.company.cybersecurity.exceptions.*;
 import com.company.cybersecurity.models.Role;
 import com.company.cybersecurity.models.User;
 import com.company.cybersecurity.repos.UserRepository;
-import com.company.cybersecurity.security.AESUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,27 +14,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.crypto.*;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import java.io.*;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.company.cybersecurity.Init.decryptedFilePath;
 
 @Service
 @Slf4j
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final String regex = "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[-+*/]).+";
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -80,7 +70,10 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
-    public void saveUser(User user) {
+    public void saveUser(User user) throws WrongPasswordFormatException {
+        if (!checkRegexp(user.getPassword()))
+            user.setPasswordNotRestricted(false);
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setPasswordLastChanged(LocalDateTime.now());
         user.setAccountNonLocked(true);
@@ -118,9 +111,12 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public void changePassword(String newPassword, User user) {
+    public void changePassword(String newPassword, User user) throws WrongPasswordFormatException {
+        if (checkRegexp(newPassword))
+            throw new WrongPasswordFormatException("Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций!");
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setPasswordLastChanged(LocalDateTime.now());
+        user.setPasswordNotRestricted(true);
         userRepository.save(user);
     }
 
@@ -148,6 +144,35 @@ public class UserService implements UserDetailsService {
 
     public User findUserByEmail(String email) throws UserNotFoundException {
         return userRepository.findByEmail(email);
+    }
+
+    public void restrictPasswordCharacters(User user) throws WrongPasswordFormatException {
+        user.setPasswordNotRestricted(false);
+        userRepository.save(user);
+//        try (FileReader fileReader = new FileReader(Init.decryptedFilePath);
+//             BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+//            String line = null;
+//            String password;
+//            while ((line = bufferedReader.readLine()) != null) {
+//                int startIndex = line.indexOf("password=");
+//                int endIndex = line.indexOf(",", startIndex);
+//                String passwordLine = line.substring(startIndex + 9, endIndex);
+//            }
+//        } catch (
+//                Exception e) {
+//            e.getMessage();
+//        }
+    }
+
+//        if (passwordEncoder.matches(rawPassword, encodedPassword)) {
+//
+//        }
+
+
+    private boolean checkRegexp(String password) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(password);
+        return matcher.find();
     }
 
     @Override

@@ -9,7 +9,7 @@ import java.io.File;
 @SpringBootApplication
 @EnableAspectJAutoProxy
 public class DeaneryApplication {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         SpringApplication.run(DeaneryApplication.class, args);
     }
 
