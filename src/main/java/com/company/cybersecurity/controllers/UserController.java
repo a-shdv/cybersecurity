@@ -1,22 +1,20 @@
 package com.company.cybersecurity.controllers;
 
 import com.company.cybersecurity.configs.CustomAuthenticationFailureHandler;
-import com.company.cybersecurity.dtos.ChangePasswordDto;
-import com.company.cybersecurity.dtos.ChangePasswordExpiredDto;
-import com.company.cybersecurity.dtos.ChangeUsernameDto;
-import com.company.cybersecurity.dtos.RegistrationDto;
-import com.company.cybersecurity.exceptions.OldPasswordIsWrongException;
-import com.company.cybersecurity.exceptions.PasswordsMismatchException;
-import com.company.cybersecurity.exceptions.UserAlreadyExistsException;
-import com.company.cybersecurity.exceptions.UserNotFoundException;
+import com.company.cybersecurity.dtos.*;
+import com.company.cybersecurity.exceptions.*;
 import com.company.cybersecurity.models.User;
 import com.company.cybersecurity.services.UserService;
+import liquibase.pro.packaged.S;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,8 +37,8 @@ public class UserController {
 
     @GetMapping("/login")
     public String login(Model model) {
-        CustomAuthenticationFailureHandler handler = context.getBean(CustomAuthenticationFailureHandler.class);
-        Exception ex = handler.getException();
+        CustomAuthenticationFailureHandler failureHandler = context.getBean(CustomAuthenticationFailureHandler.class);
+        Exception ex = failureHandler.getException();
         String message;
 
         if (ex != null) {
@@ -55,7 +53,7 @@ public class UserController {
             }
 
             if (ex instanceof DisabledException) {
-                message = "Ваше имя пользователя не проходит правила модерации. Пожалуйста, смените имя пользователя!";
+                message = "Ваше имя пользователя или пароль не проходит правила модерации. Пожалуйста, проверьте, содержит ли ваш пароль строчные или прописные буквы, а также знаки арифметических операций. Длина пароля также должна быть >= 3-х символов. Если это не помогло, то, пожалуйста, смените имя пользователя.";
                 model.addAttribute("disabledMessage", message);
             }
         }
@@ -85,6 +83,10 @@ public class UserController {
             return "users/registration";
         } catch (UserAlreadyExistsException userAlreadyExistsException) {
             message = "Такой пользователь уже существует!";
+            model.addAttribute("message", message);
+            return "users/registration";
+        } catch (WrongPasswordFormatException e) {
+            message = "Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть > 3-х символов!";
             model.addAttribute("message", message);
             return "users/registration";
         }
@@ -130,6 +132,10 @@ public class UserController {
             message = "Пользователь не найден!";
             model.addAttribute("message", message);
             return "users/change-password-expired";
+        } catch (WrongPasswordFormatException e) {
+            message = "Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть > 3-х символов!";
+            model.addAttribute("message", message);
+            return "users/change-password-expired";
         }
 
         model.addAttribute("message", message);
@@ -159,6 +165,11 @@ public class UserController {
         return "users/change-username";
     }
 
+    @GetMapping("/change-password-decline")
+    public void changePasswordDecline() {
+        System.exit(0);
+    }
+
     @PostMapping("/change-password")
     public String changePassword(@ModelAttribute("changePasswordDto") ChangePasswordDto dto, @AuthenticationPrincipal User user, Model model) {
         String message = null;
@@ -177,10 +188,17 @@ public class UserController {
             message = "Пароли не совпадают!";
             model.addAttribute("message", message);
             return "users/registration";
+        } catch (WrongPasswordFormatException e) {
+            message = "Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть > 3-х символов!";
+            model.addAttribute("message", message);
+            return "users/registration";
         }
         model.addAttribute("message", message);
         return "users/change-password";
     }
 
-
+    @GetMapping("/about-us")
+    public String aboutUs() {
+        return "about-us";
+    }
 }

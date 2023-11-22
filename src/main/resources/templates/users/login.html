@@ -10,20 +10,24 @@
 <body>
 <h1>Авторизоваться</h1>
 <!--Password expired-->
-<div th:if="${expirationMessage != null}">
+<div th:if="${expirationMessage != null}" id="expirationMessage">
     <span th:text="${expirationMessage}"></span>
     <br>
-    <a th:href="@{/change-password-expired}">Сменить пароль</a>
+    <a th:href="@{/change-password-expired}">Сменить пароль</a> <br> <br>
+    <a th:href="@{/change-password-decline}">Отказываюсь менять свой пароль</a>
 </div>
 
 <!--Bad credentials-->
-<div th:if="${badCredentialsMessage}" th:text="${badCredentialsMessage}"></div>
+<div th:if="${badCredentialsMessage}" th:text="${badCredentialsMessage}" id="badCredentialsMessage">
+</div>
 
 <!--User is disabled-->
-<div th:if="${disabledMessage}">
+<div th:if="${disabledMessage}" id="disabledMessage">
     <span th:text="${disabledMessage}"></span>
     <br>
-    <a th:href="@{/change-username}">Сменить имя пользователя</a>
+    <a th:href="@{/change-username}">Сменить имя пользователя</a> <br>
+    <a th:href="@{/change-password-expired}">Сменить пароль</a> <br> <br>
+    <a th:href="@{/change-password-decline}">Отказываюсь менять свой пароль</a>
 </div>
 
 <form th:action="@{/login}" method="post">
@@ -36,10 +40,12 @@
         <tr>
             <!-- Пароль -->
             <td>Пароль:</td>
-            <td><input type='password' name='password' /></td>
+            <td><input type='password' name='password'/></td>
         </tr>
         <!-- Войти -->
-        <tr><td><input type="submit" value="Войти" /></td></tr>
+        <tr>
+            <td><input type="submit" value="Войти"/></td>
+        </tr>
     </table>
 </form>
 

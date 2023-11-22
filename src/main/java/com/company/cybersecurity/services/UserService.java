@@ -1,9 +1,7 @@
 package com.company.cybersecurity.services;
 
-import com.company.cybersecurity.exceptions.OldPasswordIsWrongException;
-import com.company.cybersecurity.exceptions.PasswordsMismatchException;
-import com.company.cybersecurity.exceptions.UserAlreadyExistsException;
-import com.company.cybersecurity.exceptions.UserNotFoundException;
+import com.company.cybersecurity.Init;
+import com.company.cybersecurity.exceptions.*;
 import com.company.cybersecurity.models.Role;
 import com.company.cybersecurity.models.User;
 import com.company.cybersecurity.repos.UserRepository;
@@ -16,22 +14,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.crypto.*;
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import java.io.*;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.company.cybersecurity.Init.decryptedFilePath;
 
 @Service
 @Slf4j
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final String regex = "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[-+*/]).+";
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -40,7 +36,7 @@ public class UserService implements UserDetailsService {
     }
 
     @PostConstruct
-    private void postConstruct() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidAlgorithmParameterException, InvalidKeyException, NoSuchPaddingException {
+    private void postConstruct() throws Exception {
         User user = Optional.ofNullable(userRepository.findByUsername("user")).orElse(new User("user", "user@user.com", passwordEncoder.encode("user")));
         user.setRoles(Collections.singletonList(Role.USER));
         user.setPasswordLastChanged(LocalDateTime.now());
@@ -51,16 +47,6 @@ public class UserService implements UserDetailsService {
 
         userRepository.save(user);
         userRepository.save(admin);
-
-        // Создание файла
-//        String content = findAllUsers().stream()
-//                .sorted(Comparator.comparing(User::getId))
-//                .map(User::toString)
-//                .collect(Collectors.joining(System.lineSeparator()));
-
-
-//        Path path = Paths.get("users.txt");
-//        Files.write(path, content.getBytes());
     }
 
 
@@ -84,7 +70,10 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
-    public void saveUser(User user) {
+    public void saveUser(User user) throws WrongPasswordFormatException {
+        if (!checkRegexp(user.getPassword()) || user.getPassword().length() > 3)
+            user.setPasswordNotRestricted(false);
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setPasswordLastChanged(LocalDateTime.now());
         user.setAccountNonLocked(true);
@@ -122,9 +111,12 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public void changePassword(String newPassword, User user) {
+    public void changePassword(String newPassword, User user) throws WrongPasswordFormatException {
+        if (checkRegexp(newPassword) || user.getPassword().length() > 3)
+            throw new WrongPasswordFormatException("Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть >= 3-х символов!");
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setPasswordLastChanged(LocalDateTime.now());
+        user.setPasswordNotRestricted(true);
         userRepository.save(user);
     }
 
@@ -152,6 +144,33 @@ public class UserService implements UserDetailsService {
 
     public User findUserByEmail(String email) throws UserNotFoundException {
         return userRepository.findByEmail(email);
+    }
+
+    public void restrictPasswordCharacters(User user) throws WrongPasswordFormatException {
+        user.setPasswordNotRestricted(false);
+        userRepository.save(user);
+    }
+
+    public void unrestrictPasswordCharacters(User user) {
+        user.setPasswordNotRestricted(true);
+        userRepository.save(user);
+    }
+
+    public void restrictPasswordLengthn(User user) throws WrongPasswordFormatException {
+//        user.setPasswordNotRestricted(false);
+        userRepository.save(user);
+    }
+
+    public void unrestrictPasswordLength(User user) {
+//        user.setPasswordNotRestricted(true);
+        userRepository.save(user);
+    }
+
+
+    private boolean checkRegexp(String password) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(password);
+        return matcher.find();
     }
 
     @Override

@@ -2,12 +2,14 @@ package com.company.cybersecurity.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -23,10 +25,11 @@ public class WebSecurityConfiguration extends  WebSecurityConfigurerAdapter  {
         return new CustomAuthenticationFailureHandler();
     }
 
-//    @Bean
-//    public AuthenticationSuccessHandler authenticationSuccessHandler() {
-//        return new CustomAuthenticationSuccessHandler();
-//    }
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -35,7 +38,7 @@ public class WebSecurityConfiguration extends  WebSecurityConfigurerAdapter  {
                 .disable()
             .authorizeRequests()
                 .antMatchers("/", "/login", "/resources/**", "/registration",
-                        "/change-password-expired", "/change-username")
+                        "/change-password-expired", "/change-username", "/about-us")
                 .permitAll()
             .anyRequest().authenticated()
             .and()

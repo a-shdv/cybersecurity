@@ -15,6 +15,8 @@
         <th>Электронная почта</th>
         <th>Имя пользователя</th>
         <th>Запретить имя пользователя</th>
+        <th>Установить ограничение символов для пароля</th>
+        <th>Установить ограничение длины для пароля</th>
         <th>Статус аккаунта</th>
         <th>Заблокировать аккаунт</th>
     </tr>
@@ -36,6 +38,16 @@
         <td>
             <a th:href="@{/admin/disable-by-username(username=${user.getUsername()})}">(Запретить)</a>    |
             <a th:href="@{/admin/enable-by-username(username=${user.getUsername()})}">(Разрешить)</a>
+        </td>
+        <!--Restrict password characters-->
+        <td>
+            <a th:href="@{/admin/restrict-password-characters(id=${user.getId()})}">(Запретить)    |</a>
+            <a th:href="@{/admin/unrestrict-password-characters(id=${user.getId()})}">(Разрешить)</a>
+        </td>
+        <!--Restrict password length-->
+        <td>
+            <a th:href="@{/admin/restrict-password-length(id=${user.getId()})}">(Запретить)    |</a>
+            <a th:href="@{/admin/unrestrict-password-length(id=${user.getId()})}">(Разрешить)</a>
         </td>
         <!--Account status-->
         <td th:text="${user.isAccountNonLocked()}"></td>
