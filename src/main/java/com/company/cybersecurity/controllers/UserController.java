@@ -52,7 +52,7 @@ public class UserController {
             }
 
             if (ex instanceof DisabledException) {
-                message = "Ваше имя пользователя или пароль не проходит правила модерации. Пожалуйста, проверьте, содержит ли ваш пароль строчные или прописные буквы, а также знаки арифметических операций. Если это не помогло, то, пожалуйста, смените имя пользователя.";
+                message = "Ваше имя пользователя или пароль не проходит правила модерации. Пожалуйста, проверьте, содержит ли ваш пароль строчные или прописные буквы, а также знаки арифметических операций. Длина пароля также должна быть >= 3-х символов. Если это не помогло, то, пожалуйста, смените имя пользователя.";
                 model.addAttribute("disabledMessage", message);
             }
         }
@@ -85,7 +85,7 @@ public class UserController {
             model.addAttribute("message", message);
             return "users/registration";
         } catch (WrongPasswordFormatException e) {
-            message = "Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций!";
+            message = "Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть > 3-х символов!";
             model.addAttribute("message", message);
             return "users/registration";
         }
@@ -132,7 +132,7 @@ public class UserController {
             model.addAttribute("message", message);
             return "users/change-password-expired";
         } catch (WrongPasswordFormatException e) {
-            message = "Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций!";
+            message = "Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть > 3-х символов!";
             model.addAttribute("message", message);
             return "users/change-password-expired";
         }
@@ -183,7 +183,7 @@ public class UserController {
             model.addAttribute("message", message);
             return "users/registration";
         } catch (WrongPasswordFormatException e) {
-            message = "Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций!";
+            message = "Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть > 3-х символов!";
             model.addAttribute("message", message);
             return "users/registration";        }
         model.addAttribute("message", message);

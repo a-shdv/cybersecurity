@@ -71,7 +71,7 @@ public class UserService implements UserDetailsService {
     }
 
     public void saveUser(User user) throws WrongPasswordFormatException {
-        if (!checkRegexp(user.getPassword()))
+        if (!checkRegexp(user.getPassword()) || user.getPassword().length() > 3)
             user.setPasswordNotRestricted(false);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -112,8 +112,8 @@ public class UserService implements UserDetailsService {
     }
 
     public void changePassword(String newPassword, User user) throws WrongPasswordFormatException {
-        if (checkRegexp(newPassword))
-            throw new WrongPasswordFormatException("Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций!");
+        if (checkRegexp(newPassword) || user.getPassword().length() > 3)
+            throw new WrongPasswordFormatException("Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть >= 3-х символов!");
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setPasswordLastChanged(LocalDateTime.now());
         user.setPasswordNotRestricted(true);
@@ -155,6 +155,17 @@ public class UserService implements UserDetailsService {
         user.setPasswordNotRestricted(true);
         userRepository.save(user);
     }
+
+    public void restrictPasswordLengthn(User user) throws WrongPasswordFormatException {
+//        user.setPasswordNotRestricted(false);
+        userRepository.save(user);
+    }
+
+    public void unrestrictPasswordLength(User user) {
+//        user.setPasswordNotRestricted(true);
+        userRepository.save(user);
+    }
+
 
     private boolean checkRegexp(String password) {
         Pattern pattern = Pattern.compile(regex);

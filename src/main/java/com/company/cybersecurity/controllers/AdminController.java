@@ -69,7 +69,7 @@ public class AdminController {
         } catch (PasswordsMismatchException | UserAlreadyExistsException e) {
             message = e.getLocalizedMessage();
         } catch (WrongPasswordFormatException e) {
-            message = "Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций!";
+            message = "Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть > 3-х символов!";
         }
         model.addAttribute("message", message);
 
@@ -133,7 +133,7 @@ public class AdminController {
         } catch (UserNotFoundException e) {
             throw new UserNotFoundException("Username with id " + id + " was not found!");
         } catch (WrongPasswordFormatException e) {
-            throw new WrongPasswordFormatException("Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций!");
+            throw new WrongPasswordFormatException("Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть > 3-х символов!");
         }
         return "admins/user-restrict-password-characters";
     }
