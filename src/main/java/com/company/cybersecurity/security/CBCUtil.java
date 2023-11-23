@@ -12,11 +12,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 @Component
-public class AESUtil {
+public class CBCUtil {
     private SecretKey secretKey;
     private IvParameterSpec ivParameterSpec;
 
-    public AESUtil() throws NoSuchAlgorithmException {
+    public CBCUtil() throws NoSuchAlgorithmException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
         keyGenerator.init(128);
         this.secretKey = keyGenerator.generateKey();

@@ -41,6 +41,7 @@ public class UserController {
         Exception ex = failureHandler.getException();
         String message;
 
+        model.asMap().clear();
         if (ex != null) {
             if (ex instanceof CredentialsExpiredException) {
                 message = "Срок действия пароля пользователя истек. Пожалуйста, смените пароль!";
@@ -70,6 +71,7 @@ public class UserController {
     public String registration(@ModelAttribute("registrationDto") RegistrationDto dto, Model model) {
         User userFromDb = userService.findUserByUsername(dto.getUsername());
         String message;
+
         try {
             boolean isPasswordsMatch = userService.isPasswordsMatch(dto.getPassword(), dto.getConfirmPassword());
             boolean isAlreadyExists = userService.isAlreadyExists(userFromDb);

@@ -8,9 +8,14 @@
     <title>Деканат: Войти</title>
 </head>
 <body>
+<style>
+    span {
+        color: red;
+    }
+</style>
 <h1>Авторизоваться</h1>
 <!--Password expired-->
-<div th:if="${expirationMessage != null}" id="expirationMessage">
+<div th:if="${expirationMessage}">
     <span th:text="${expirationMessage}"></span>
     <br>
     <a th:href="@{/change-password-expired}">Сменить пароль</a> <br> <br>
@@ -18,7 +23,7 @@
 </div>
 
 <!--Bad credentials-->
-<div th:if="${badCredentialsMessage}" th:text="${badCredentialsMessage}" id="badCredentialsMessage">
+<div th:if="${badCredentialsMessage}" th:text="${badCredentialsMessage}">
 </div>
 
 <!--User is disabled-->
