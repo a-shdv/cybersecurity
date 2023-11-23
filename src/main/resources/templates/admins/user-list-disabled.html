@@ -15,16 +15,14 @@
         <th>Электронная почта</th>
         <th>Имя пользователя</th>
         <th>Активность аккаунта</th>
-        <th>Запретить имя пользователя</th>
-        <th>Запретить пароль (символы)</th>
-        <th>Запретить пароль (длина)</th>
-        <th>Статус аккаунта</th>
-        <th>Заблокировать аккаунт</th>
+        <th>Имя пользователя<br>(Блок. | Разблок.)</th>
+        <th>Пароль - символы<br>(Блок. | Разблок.)</th>
+        <th>Пароль - длина<br>(Блок. | Разблок.)</th>
     </tr>
     </thead>
     <tbody>
     <!--Users list-->
-    <tr th:each="user : ${users}">
+    <tr th:each="user : ${users}" style="text-align: center">
         <!--ID-->
         <th th:text="${user.getId()}" th:value="userId"></th>
         <!--Email-->
@@ -36,37 +34,27 @@
         <!--Account status-->
         <td>
             <div th:if="${user.isEnabled()}">
-                Активирован
+                Акт.
             </div>
             <div th:if="${!user.isEnabled()}">
-                Не активирован
+                Не акт.
             </div>
         </td>
 
         <!--Disable username-->
         <td>
-            <a th:href="@{/admin/disable-by-username(username=${user.getUsername()})}">(✓</a>    |
-            <a th:href="@{/admin/enable-by-username(username=${user.getUsername()})}">X)</a>
+            <a th:href="@{/admin/disable-by-username(username=${user.getUsername()})}">(X</a>    |
+            <a th:href="@{/admin/enable-by-username(username=${user.getUsername()})}">✓)</a>
         </td>
         <!--Restrict password characters-->
         <td>
-            <a th:href="@{/admin/restrict-password-characters(id=${user.getId()})}">(✓    |</a>
-            <a th:href="@{/admin/unrestrict-password-characters(id=${user.getId()})}">X)</a>
+            <a th:href="@{/admin/restrict-password-characters(id=${user.getId()})}">(X    |</a>
+            <a th:href="@{/admin/unrestrict-password-characters(id=${user.getId()})}">✓</a>
         </td>
         <!--Restrict password length-->
         <td>
-            <a th:href="@{/admin/restrict-password-length(id=${user.getId()})}">(✓    |</a>
-            <a th:href="@{/admin/unrestrict-password-length(id=${user.getId()})}">X)</a>
-        </td>
-        <!--Account status-->
-        <td>
-            <span th:if="${!user.isAccountNonLocked()}">Заблокирован</span>
-            <span th:if="${user.isAccountNonLocked()}">Разрешен</span>
-        </td>
-        <!--Actions-->
-        <td>
-            <a th:href="@{/admin/lock(userId=${user.getId()})}">(✓</a>    |
-            <a th:href="@{/admin/unlock(userId=${user.getId()})}">X)</a>
+            <a th:href="@{/admin/restrict-password-length(id=${user.getId()})}">(X    |</a>
+            <a th:href="@{/admin/unrestrict-password-length(id=${user.getId()})}">✓)</a>
         </td>
     </tr>
     </tbody>

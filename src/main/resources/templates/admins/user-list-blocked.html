@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Деканат: Пользователи</title>
+</head>
+<body>
+<table border="1">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Электронная почта</th>
+        <th>Имя пользователя</th>
+        <th>Статус аккаунта</th>
+        <th>Блок. | Разбл.</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!--Users list-->
+    <tr th:each="user : ${users}" style="text-align: center">
+        <!--ID-->
+        <th th:text="${user.getId()}" th:value="userId"></th>
+        <!--Email-->
+        <td th:if="${user.getEmail() != null}" th:text="${user.getEmail()}"></td>
+        <td th:if="${user.getEmail() == null}">----</td>
+        <!--Username-->
+        <td><a th:href="@{/admin/users/{id}(id=${user.getId()})}"><span th:text="${user.getUsername()}"></span></a></td>
+        <!--Account status-->
+        <td>
+            <span th:if="${!user.isAccountNonLocked()}">Заблокирован</span>
+            <span th:if="${user.isAccountNonLocked()}">Разрешен</span>
+        </td>
+        <!--Actions-->
+        <td>
+            <a th:href="@{/admin/lock(userId=${user.getId()})}">(X</a>    |
+            <a th:href="@{/admin/unlock(userId=${user.getId()})}">✓)</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<a th:href="@{/admin/users/save}">Создать нового пользователя</a>
+<br>
+<button onclick="history.back()">Вернуться</button>
+</body>
+</html>
