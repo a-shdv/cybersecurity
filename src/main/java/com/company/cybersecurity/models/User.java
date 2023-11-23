@@ -54,6 +54,10 @@ public class User implements UserDetails {
         this.password = password;
     }
 
+    public boolean getEnabled() {
+        return this.isEnabled;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles();
@@ -71,30 +75,22 @@ public class User implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-//        if (isPasswordRestricted) {
-//            return false;
-//        }
         if (passwordLastChanged != null) {
             LocalDateTime now = LocalDateTime.now();
             long daysSinceLastChange = ChronoUnit.DAYS.between(passwordLastChanged, now);
             return daysSinceLastChange <= 30;
         }
-
         return true;
     }
 
     @Override
     public boolean isEnabled() {
-        if (!isEnabled)
-            return false;
-        if (!isPasswordNotRestricted)
+        if (!isEnabled || !isPasswordNotRestricted)
             return false;
         return true;
     }
 
-    public boolean isPasswordNotRestricted() {
-        return isPasswordNotRestricted;
-    }
+
 
     public void setPasswordNotRestricted(boolean passwordNotRestricted) {
         this.isPasswordNotRestricted = passwordNotRestricted;
