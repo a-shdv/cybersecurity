@@ -164,6 +164,30 @@ public class AdminController {
 
     }
 
+    @GetMapping("restrict-password-length")
+    public String restrictPasswordLength(@RequestParam("id") Long id, Model model) throws UserNotFoundException {
+        try {
+            User user = userService.findUserById(id);
+            userService.restrictPasswordLength(user);
+            model.addAttribute("user", user);
+        } catch (UserNotFoundException e) {
+            throw new UserNotFoundException("Username with id " + id + " was not found!");
+        }
+        return "redirect:/admin/user-list-disabled";
+    }
+
+    @GetMapping("unrestrict-password-length")
+    public String unrestrictPasswordLength(@RequestParam("id") Long id, Model model) throws UserNotFoundException {
+        try {
+            User user = userService.findUserById(id);
+            userService.unrestrictPasswordLength(user);
+            model.addAttribute("user", user);
+        } catch (UserNotFoundException e) {
+            throw new UserNotFoundException("Username with id " + id + " was not found!");
+        }
+        return "redirect:/admin/user-list-disabled";
+    }
+
     @GetMapping("/exit")
     public void exit() {
         System.exit(0);

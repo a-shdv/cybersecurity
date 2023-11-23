@@ -32,7 +32,7 @@ public class User implements UserDetails {
     @Size(min = 0, max = 255, message = "Электронная не может превышать 255 символов!")
     private String email;
 
-    @Size(min = 0, max = 255, message = "Имя пользователя не может превышать 255 символов!")
+    @Size(min = 0, max = 255, message = "Пароль не может превышать 255 символов!")
     private String password;
 
     private boolean isAccountNonLocked = true;

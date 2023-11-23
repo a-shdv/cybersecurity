@@ -1,6 +1,5 @@
 package com.company.cybersecurity.services;
 
-import com.company.cybersecurity.Init;
 import com.company.cybersecurity.exceptions.*;
 import com.company.cybersecurity.models.Role;
 import com.company.cybersecurity.models.User;
@@ -14,13 +13,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.io.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.company.cybersecurity.Init.decryptedFilePath;
 
 @Service
 @Slf4j
@@ -156,13 +152,13 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public void restrictPasswordLengthn(User user) throws WrongPasswordFormatException {
-//        user.setPasswordNotRestricted(false);
+    public void restrictPasswordLength(User user) {
+
         userRepository.save(user);
     }
 
     public void unrestrictPasswordLength(User user) {
-//        user.setPasswordNotRestricted(true);
+
         userRepository.save(user);
     }
 

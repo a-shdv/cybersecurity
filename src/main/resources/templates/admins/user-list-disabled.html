@@ -17,7 +17,6 @@
         <th>Активность аккаунта</th>
         <th>Имя пользователя<br>(Блок. | Разблок.)</th>
         <th>Пароль - символы<br>(Блок. | Разблок.)</th>
-        <th>Пароль - длина<br>(Блок. | Разблок.)</th>
     </tr>
     </thead>
     <tbody>
@@ -50,11 +49,6 @@
         <td>
             <a th:href="@{/admin/restrict-password-characters(id=${user.getId()})}">(X    |</a>
             <a th:href="@{/admin/unrestrict-password-characters(id=${user.getId()})}">✓</a>
-        </td>
-        <!--Restrict password length-->
-        <td>
-            <a th:href="@{/admin/restrict-password-length(id=${user.getId()})}">(X    |</a>
-            <a th:href="@{/admin/unrestrict-password-length(id=${user.getId()})}">✓)</a>
         </td>
     </tr>
     </tbody>
