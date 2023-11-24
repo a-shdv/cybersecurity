@@ -23,8 +23,7 @@ import java.util.regex.Pattern;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final String regex = "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[-+*/]).+";
-
+    private final String regex = "[a-zA-Z+\\-*/%]+";
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -108,7 +107,8 @@ public class UserService implements UserDetailsService {
     }
 
     public void changePassword(String newPassword, User user) throws WrongPasswordFormatException {
-        if (checkRegexp(newPassword) || user.getPassword().length() > 3)
+        var test = checkRegexp(newPassword);
+        if (!checkRegexp(newPassword) || newPassword.length() <= 3)
             throw new WrongPasswordFormatException("Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть >= 3-х символов!");
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setPasswordLastChanged(LocalDateTime.now());

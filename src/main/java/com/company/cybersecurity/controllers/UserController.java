@@ -104,6 +104,32 @@ public class UserController {
         return "users/change-password";
     }
 
+    @PostMapping("/change-password")
+    public String changePassword(@ModelAttribute("changePasswordDto") ChangePasswordDto dto, @AuthenticationPrincipal User user, Model model) {
+        String message = null;
+        model.asMap().clear();
+        try {
+            boolean isPasswordsMatch = userService.isPasswordsMatch(dto.getNewPassword(), dto.getConfirmPassword());
+            boolean isOldPasswordRight = userService.isOldPasswordRight(dto.getOldPassword(), user);
+            if (isPasswordsMatch && isOldPasswordRight) {
+                userService.changePassword(dto.getNewPassword(), user);
+                message = "Пароль изменен успешно!";
+                model.addAttribute("successMessage", message);
+            }
+        } catch (OldPasswordIsWrongException oldPasswordIsWrongException) {
+            message = "Старый пароль не верный!";
+            model.addAttribute("message", message);
+        } catch (PasswordsMismatchException passwordsMismatchException) {
+            message = "Пароли не совпадают!";
+            model.addAttribute("message", message);
+        } catch (WrongPasswordFormatException e) {
+            message = "Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть > 3-х символов!";
+            model.addAttribute("message", message);
+        }
+        return "users/change-password";
+    }
+
+
     @GetMapping("/change-password-expired")
     public String changePasswordExpired() {
         return "users/change-password-expired";
@@ -170,33 +196,6 @@ public class UserController {
     @GetMapping("/change-password-decline")
     public void changePasswordDecline() {
         System.exit(0);
-    }
-
-    @PostMapping("/change-password")
-    public String changePassword(@ModelAttribute("changePasswordDto") ChangePasswordDto dto, @AuthenticationPrincipal User user, Model model) {
-        String message = null;
-        try {
-            boolean isPasswordsMatch = userService.isPasswordsMatch(dto.getNewPassword(), dto.getConfirmPassword());
-            boolean isOldPasswordRight = userService.isOldPasswordRight(dto.getOldPassword(), user);
-            if (isPasswordsMatch && isOldPasswordRight) {
-                userService.changePassword(dto.getNewPassword(), user);
-                message = "Пароль изменен успешно!";
-            }
-        } catch (OldPasswordIsWrongException oldPasswordIsWrongException) {
-            message = "Старый пароль не верный!";
-            model.addAttribute("message", message);
-            return "users/registration";
-        } catch (PasswordsMismatchException passwordsMismatchException) {
-            message = "Пароли не совпадают!";
-            model.addAttribute("message", message);
-            return "users/registration";
-        } catch (WrongPasswordFormatException e) {
-            message = "Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть > 3-х символов!";
-            model.addAttribute("message", message);
-            return "users/registration";
-        }
-        model.addAttribute("message", message);
-        return "users/change-password";
     }
 
     @GetMapping("/about-us")
