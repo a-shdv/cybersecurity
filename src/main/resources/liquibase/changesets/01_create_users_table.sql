@@ -8,5 +8,6 @@ create table users
     is_account_non_locked  boolean,
     is_enabled             boolean,
     is_password_not_restricted boolean,
+    is_password_not_expired boolean,
     primary key (id)
 );

@@ -188,6 +188,30 @@ public class AdminController {
         return "redirect:/admin/user-list-disabled";
     }
 
+    @GetMapping("restrict-password-expiration")
+    public String restrictPasswordExpiration(@RequestParam("id") Long id, Model model) throws UserNotFoundException {
+        try {
+            User user = userService.findUserById(id);
+            userService.restrictPasswordExpiration(user);
+            model.addAttribute("user", user);
+        } catch (UserNotFoundException e) {
+            throw new UserNotFoundException("Username with id " + id + " was not found!");
+        }
+        return "redirect:/admin/user-list-disabled";
+    }
+
+    @GetMapping("unrestrict-password-expiration")
+    public String unrestrictPasswordExpiration(@RequestParam("id") Long id, Model model) throws UserNotFoundException {
+        try {
+            User user = userService.findUserById(id);
+            userService.unrestrictPasswordExpiration(user);
+            model.addAttribute("user", user);
+        } catch (UserNotFoundException e) {
+            throw new UserNotFoundException("Username with id " + id + " was not found!");
+        }
+        return "redirect:/admin/user-list-disabled";
+    }
+
     @GetMapping("/exit")
     public void exit() {
         System.exit(0);

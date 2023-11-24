@@ -112,6 +112,7 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setPasswordLastChanged(LocalDateTime.now());
         user.setPasswordNotRestricted(true);
+        user.setPasswordNotExpired(true);
         userRepository.save(user);
     }
 
@@ -153,11 +154,21 @@ public class UserService implements UserDetailsService {
 
     public void restrictPasswordLength(User user) {
 
-        userRepository.save(user);
+//        userRepository.save(user);
     }
 
     public void unrestrictPasswordLength(User user) {
 
+//        userRepository.save(user);
+    }
+
+    public void restrictPasswordExpiration(User user) {
+        user.setPasswordNotExpired(false);
+        userRepository.save(user);
+    }
+
+    public void unrestrictPasswordExpiration(User user) {
+        user.setPasswordNotExpired(true);
         userRepository.save(user);
     }
 

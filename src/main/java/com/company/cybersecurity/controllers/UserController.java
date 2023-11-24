@@ -131,7 +131,6 @@ public class UserController {
         return "users/change-password";
     }
 
-
     @GetMapping("/change-password-expired")
     public String changePasswordExpired() {
         return "users/change-password-expired";

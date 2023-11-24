@@ -8,6 +8,7 @@
     <title>Деканат: Пользователи</title>
 </head>
 <body>
+<h1>Статус замороженных аккаунтов пользователей</h1>
 <table border="1">
     <thead>
     <tr>
@@ -17,6 +18,7 @@
         <th>Активность аккаунта</th>
         <th>Имя пользователя<br>(Блок. | Разблок.)</th>
         <th>Пароль - символы<br>(Блок. | Разблок.)</th>
+        <th>Пароль - срок действия<br>(Блок. | Разблок.)</th>
     </tr>
     </thead>
     <tbody>
@@ -45,10 +47,17 @@
             <a th:href="@{/admin/disable-by-username(username=${user.getUsername()})}">(X</a>    |
             <a th:href="@{/admin/enable-by-username(username=${user.getUsername()})}">✓)</a>
         </td>
+
         <!--Restrict password characters-->
         <td>
             <a th:href="@{/admin/restrict-password-characters(id=${user.getId()})}">(X    |</a>
             <a th:href="@{/admin/unrestrict-password-characters(id=${user.getId()})}">✓</a>
+        </td>
+
+        <!--Restrict password expiration-->
+        <td>
+            <a th:href="@{/admin/restrict-password-expiration(id=${user.getId()})}">(X    |</a>
+            <a th:href="@{/admin/unrestrict-password-expiration(id=${user.getId()})}">✓</a>
         </td>
     </tr>
     </tbody>
