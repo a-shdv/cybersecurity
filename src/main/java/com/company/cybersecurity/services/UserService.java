@@ -107,7 +107,6 @@ public class UserService implements UserDetailsService {
     }
 
     public void changePassword(String newPassword, User user) throws WrongPasswordFormatException {
-        var test = checkRegexp(newPassword);
         if (!checkRegexp(newPassword) || newPassword.length() <= 3)
             throw new WrongPasswordFormatException("Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть >= 3-х символов!");
         user.setPassword(passwordEncoder.encode(newPassword));

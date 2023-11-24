@@ -8,10 +8,7 @@ import com.company.cybersecurity.services.UserService;
 import liquibase.pro.packaged.S;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.CredentialsExpiredException;
-import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -56,6 +53,11 @@ public class UserController {
             if (ex instanceof DisabledException) {
                 message = "Ваше имя пользователя или пароль не проходит правила модерации. Пожалуйста, проверьте, содержит ли ваш пароль строчные или прописные буквы, а также знаки арифметических операций. Длина пароля также должна быть >= 3-х символов. Если это не помогло, то, пожалуйста, смените имя пользователя.";
                 model.addAttribute("disabledMessage", message);
+            }
+
+            if (ex instanceof LockedException) {
+                message = "К сожалению, ваш аккаунт заблокирован из-за неподобающего поведения!";
+                model.addAttribute("lockedMessage", message);
             }
             failureHandler.setException(null);
         }

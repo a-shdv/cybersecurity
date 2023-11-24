@@ -10,7 +10,7 @@
 <body>
 <h1>Главная страница</h1>
 <!--Error message-->
-<div th:if="${message != null}">
+<div th:if="${message}" style="color: green">
     <div th:text="${message}"></div>
 </div>
 
