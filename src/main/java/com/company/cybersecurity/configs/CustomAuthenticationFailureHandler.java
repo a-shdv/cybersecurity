@@ -17,6 +17,10 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
         return exception;
     }
 
+    public void setException(AuthenticationException exception) {
+        this.exception = exception;
+    }
+
     public static int getFailureCount() {
         return failureCount;
     }
@@ -27,9 +31,7 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
         if (failureCount >= 3) {
             System.exit(0);
         }
-
         this.exception = exception;
-
         super.onAuthenticationFailure(request, response, exception);
     }
 }
