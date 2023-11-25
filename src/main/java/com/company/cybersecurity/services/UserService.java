@@ -1,6 +1,6 @@
 package com.company.cybersecurity.services;
 
-import com.company.cybersecurity.Init;
+import com.company.cybersecurity.configs.ShaPasswordEncoder;
 import com.company.cybersecurity.exceptions.*;
 import com.company.cybersecurity.models.Role;
 import com.company.cybersecurity.models.User;
@@ -14,21 +14,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.io.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.company.cybersecurity.Init.decryptedFilePath;
 
 @Service
 @Slf4j
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final String regex = "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[-+*/]).+";
-
+    private final String regex = "[a-zA-Z+\\-*/%]+";
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -112,11 +108,12 @@ public class UserService implements UserDetailsService {
     }
 
     public void changePassword(String newPassword, User user) throws WrongPasswordFormatException {
-        if (checkRegexp(newPassword) || user.getPassword().length() > 3)
+        if (!checkRegexp(newPassword) || newPassword.length() <= 3)
             throw new WrongPasswordFormatException("Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть >= 3-х символов!");
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setPasswordLastChanged(LocalDateTime.now());
         user.setPasswordNotRestricted(true);
+        user.setPasswordNotExpired(true);
         userRepository.save(user);
     }
 
@@ -156,13 +153,23 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public void restrictPasswordLengthn(User user) throws WrongPasswordFormatException {
-//        user.setPasswordNotRestricted(false);
-        userRepository.save(user);
+    public void restrictPasswordLength(User user) {
+
+//        userRepository.save(user);
     }
 
     public void unrestrictPasswordLength(User user) {
-//        user.setPasswordNotRestricted(true);
+
+//        userRepository.save(user);
+    }
+
+    public void restrictPasswordExpiration(User user) {
+        user.setPasswordNotExpired(false);
+        userRepository.save(user);
+    }
+
+    public void unrestrictPasswordExpiration(User user) {
+        user.setPasswordNotExpired(true);
         userRepository.save(user);
     }
 

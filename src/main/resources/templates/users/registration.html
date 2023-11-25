@@ -8,9 +8,10 @@
     <title>Деканат: Зарегистрироваться</title>
 </head>
 <body>
+<h1>Зарегистрироваться</h1>
 <!--Error message-->
-<div th:if="${message != null}">
-    <div th:text="${message}"></div>
+<div th:if="${message}">
+    <div th:text="${message}" style="color: red"></div>
 </div>
 <form method="post" th:action="@{/registration}" th:object="${registrationDto}">
     <label for="username">Имя пользователя</label>

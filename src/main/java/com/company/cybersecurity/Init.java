@@ -1,24 +1,17 @@
 package com.company.cybersecurity;
 
 import com.company.cybersecurity.models.User;
-import com.company.cybersecurity.security.AESUtil;
+import com.company.cybersecurity.security.DESUtil;
 import com.company.cybersecurity.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationContextInitializedEvent;
-import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.ContextClosedEvent;
-import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
@@ -26,14 +19,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Init {
     private final UserService userService;
-    private final AESUtil aesUtil;
+    private final DESUtil desUtil;
     public final static String encryptedFilePath = System.getProperty("user.dir") + "/users-credentials.txt";
     public final static String decryptedFilePath = System.getProperty("user.dir") + "/temp.txt";
 
     @Autowired
-    public Init(UserService userService, AESUtil aesUtil) {
+    public Init(UserService userService, DESUtil desUtil) {
         this.userService = userService;
-        this.aesUtil = aesUtil;
+        this.desUtil = desUtil;
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -50,8 +43,8 @@ public class Init {
 
         /*Encryption and decryption*/
         try {
-            encryptedContent = aesUtil.encrypt(content);
-            decryptedContent = aesUtil.decrypt(encryptedContent);
+            encryptedContent = desUtil.encrypt(content);
+            decryptedContent = desUtil.decrypt(encryptedContent);
         } catch (Exception e) {
             log.error(e.getMessage());
         }

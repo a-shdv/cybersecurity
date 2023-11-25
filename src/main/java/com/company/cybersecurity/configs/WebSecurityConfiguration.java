@@ -34,19 +34,19 @@ public class WebSecurityConfiguration extends  WebSecurityConfigurerAdapter  {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .csrf()
-                .disable()
+            .csrf().disable()
             .authorizeRequests()
                 .antMatchers("/", "/login", "/resources/**", "/registration",
-                        "/change-password-expired", "/change-username", "/about-us")
+                        "/change-password-expired", "/change-username", "/about-us", "/error")
                 .permitAll()
             .anyRequest().authenticated()
             .and()
             .formLogin()
                 .loginPage("/login")
-                    .failureUrl("/login")
+//                    .failureUrl("/login")
+//                    .failureForwardUrl("/login")
                     .failureHandler(authenticationFailureHandler())
-                    .defaultSuccessUrl("/")
+                    .defaultSuccessUrl( "/")
                 .permitAll()
             .and()
             .logout()

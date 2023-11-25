@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,14 +30,26 @@ public class AdminController {
         this.userService = userService;
     }
 
-    @GetMapping("/users")
-    public String findAllUsers(Model model) {
+    @GetMapping("/user-list-blocked")
+    public String findAllUsersBlocked(Model model) {
         List<User> users = userService.findAllUsers()
                 .stream()
+                .sorted(Comparator.comparingLong(User::getId))
                 .filter(role -> role.getRoles().get(0).equals(Role.USER))
                 .collect(Collectors.toList());
         model.addAttribute("users", users);
-        return "admins/user-list";
+        return "admins/user-list-blocked";
+    }
+
+    @GetMapping("/user-list-disabled")
+    public String findAllUsersDisabled(Model model) {
+        List<User> users = userService.findAllUsers()
+                .stream()
+                .sorted(Comparator.comparingLong(User::getId))
+                .filter(role -> role.getRoles().get(0).equals(Role.USER))
+                .collect(Collectors.toList());
+        model.addAttribute("users", users);
+        return "admins/user-list-disabled";
     }
 
     @GetMapping("/users/{id}")
@@ -85,7 +98,7 @@ public class AdminController {
         } catch (UserNotFoundException e) {
             e.getLocalizedMessage();
         }
-        return "admins/user-blocked";
+        return "redirect:/admin/user-list-blocked";
     }
 
     @GetMapping("/unlock")
@@ -97,7 +110,7 @@ public class AdminController {
         } catch (UserNotFoundException e) {
             e.getLocalizedMessage();
         }
-        return "admins/user-unblocked";
+        return "redirect:/admin/user-list-blocked";
     }
 
     @GetMapping("/enable-by-username")
@@ -109,7 +122,7 @@ public class AdminController {
         } catch (UsernameNotFoundException e) {
             e.getLocalizedMessage();
         }
-        return "admins/user-enabled";
+        return "redirect:/admin/user-list-disabled";
     }
 
     @GetMapping("/disable-by-username")
@@ -121,7 +134,7 @@ public class AdminController {
         } catch (UsernameNotFoundException e) {
             e.getLocalizedMessage();
         }
-        return "admins/user-disabled";
+        return "redirect:/admin/user-list-disabled";
     }
 
     @GetMapping("/restrict-password-characters")
@@ -135,7 +148,7 @@ public class AdminController {
         } catch (WrongPasswordFormatException e) {
             throw new WrongPasswordFormatException("Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть > 3-х символов!");
         }
-        return "admins/user-restrict-password-characters";
+        return "redirect:/admin/user-list-disabled";
     }
 
     @GetMapping("/unrestrict-password-characters")
@@ -147,8 +160,56 @@ public class AdminController {
         } catch (UserNotFoundException e) {
             throw new UserNotFoundException("Username with id " + id + " was not found!");
         }
-        return "admins/user-unrestrict-password-characters";
+        return "redirect:/admin/user-list-disabled";
 
+    }
+
+    @GetMapping("restrict-password-length")
+    public String restrictPasswordLength(@RequestParam("id") Long id, Model model) throws UserNotFoundException {
+        try {
+            User user = userService.findUserById(id);
+            userService.restrictPasswordLength(user);
+            model.addAttribute("user", user);
+        } catch (UserNotFoundException e) {
+            throw new UserNotFoundException("Username with id " + id + " was not found!");
+        }
+        return "redirect:/admin/user-list-disabled";
+    }
+
+    @GetMapping("unrestrict-password-length")
+    public String unrestrictPasswordLength(@RequestParam("id") Long id, Model model) throws UserNotFoundException {
+        try {
+            User user = userService.findUserById(id);
+            userService.unrestrictPasswordLength(user);
+            model.addAttribute("user", user);
+        } catch (UserNotFoundException e) {
+            throw new UserNotFoundException("Username with id " + id + " was not found!");
+        }
+        return "redirect:/admin/user-list-disabled";
+    }
+
+    @GetMapping("restrict-password-expiration")
+    public String restrictPasswordExpiration(@RequestParam("id") Long id, Model model) throws UserNotFoundException {
+        try {
+            User user = userService.findUserById(id);
+            userService.restrictPasswordExpiration(user);
+            model.addAttribute("user", user);
+        } catch (UserNotFoundException e) {
+            throw new UserNotFoundException("Username with id " + id + " was not found!");
+        }
+        return "redirect:/admin/user-list-disabled";
+    }
+
+    @GetMapping("unrestrict-password-expiration")
+    public String unrestrictPasswordExpiration(@RequestParam("id") Long id, Model model) throws UserNotFoundException {
+        try {
+            User user = userService.findUserById(id);
+            userService.unrestrictPasswordExpiration(user);
+            model.addAttribute("user", user);
+        } catch (UserNotFoundException e) {
+            throw new UserNotFoundException("Username with id " + id + " was not found!");
+        }
+        return "redirect:/admin/user-list-disabled";
     }
 
     @GetMapping("/exit")

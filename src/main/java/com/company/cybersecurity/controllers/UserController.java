@@ -8,10 +8,7 @@ import com.company.cybersecurity.services.UserService;
 import liquibase.pro.packaged.S;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.CredentialsExpiredException;
-import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,6 +38,7 @@ public class UserController {
         Exception ex = failureHandler.getException();
         String message;
 
+        model.asMap().clear();
         if (ex != null) {
             if (ex instanceof CredentialsExpiredException) {
                 message = "Срок действия пароля пользователя истек. Пожалуйста, смените пароль!";
@@ -56,8 +54,13 @@ public class UserController {
                 message = "Ваше имя пользователя или пароль не проходит правила модерации. Пожалуйста, проверьте, содержит ли ваш пароль строчные или прописные буквы, а также знаки арифметических операций. Длина пароля также должна быть >= 3-х символов. Если это не помогло, то, пожалуйста, смените имя пользователя.";
                 model.addAttribute("disabledMessage", message);
             }
-        }
 
+            if (ex instanceof LockedException) {
+                message = "К сожалению, ваш аккаунт заблокирован из-за неподобающего поведения!";
+                model.addAttribute("lockedMessage", message);
+            }
+            failureHandler.setException(null);
+        }
         return "users/login";
     }
 
@@ -70,6 +73,7 @@ public class UserController {
     public String registration(@ModelAttribute("registrationDto") RegistrationDto dto, Model model) {
         User userFromDb = userService.findUserByUsername(dto.getUsername());
         String message;
+
         try {
             boolean isPasswordsMatch = userService.isPasswordsMatch(dto.getPassword(), dto.getConfirmPassword());
             boolean isAlreadyExists = userService.isAlreadyExists(userFromDb);
@@ -99,6 +103,31 @@ public class UserController {
         var passwordLastChanged = user.getPasswordLastChanged();
         if (passwordLastChanged != null)
             model.addAttribute("days", ChronoUnit.DAYS.between(passwordLastChanged, LocalDateTime.now()));
+        return "users/change-password";
+    }
+
+    @PostMapping("/change-password")
+    public String changePassword(@ModelAttribute("changePasswordDto") ChangePasswordDto dto, @AuthenticationPrincipal User user, Model model) {
+        String message = null;
+        model.asMap().clear();
+        try {
+            boolean isPasswordsMatch = userService.isPasswordsMatch(dto.getNewPassword(), dto.getConfirmPassword());
+            boolean isOldPasswordRight = userService.isOldPasswordRight(dto.getOldPassword(), user);
+            if (isPasswordsMatch && isOldPasswordRight) {
+                userService.changePassword(dto.getNewPassword(), user);
+                message = "Пароль изменен успешно!";
+                model.addAttribute("successMessage", message);
+            }
+        } catch (OldPasswordIsWrongException oldPasswordIsWrongException) {
+            message = "Старый пароль не верный!";
+            model.addAttribute("message", message);
+        } catch (PasswordsMismatchException passwordsMismatchException) {
+            message = "Пароли не совпадают!";
+            model.addAttribute("message", message);
+        } catch (WrongPasswordFormatException e) {
+            message = "Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть > 3-х символов!";
+            model.addAttribute("message", message);
+        }
         return "users/change-password";
     }
 
@@ -168,33 +197,6 @@ public class UserController {
     @GetMapping("/change-password-decline")
     public void changePasswordDecline() {
         System.exit(0);
-    }
-
-    @PostMapping("/change-password")
-    public String changePassword(@ModelAttribute("changePasswordDto") ChangePasswordDto dto, @AuthenticationPrincipal User user, Model model) {
-        String message = null;
-        try {
-            boolean isPasswordsMatch = userService.isPasswordsMatch(dto.getNewPassword(), dto.getConfirmPassword());
-            boolean isOldPasswordRight = userService.isOldPasswordRight(dto.getOldPassword(), user);
-            if (isPasswordsMatch && isOldPasswordRight) {
-                userService.changePassword(dto.getNewPassword(), user);
-                message = "Пароль изменен успешно!";
-            }
-        } catch (OldPasswordIsWrongException oldPasswordIsWrongException) {
-            message = "Старый пароль не верный!";
-            model.addAttribute("message", message);
-            return "users/registration";
-        } catch (PasswordsMismatchException passwordsMismatchException) {
-            message = "Пароли не совпадают!";
-            model.addAttribute("message", message);
-            return "users/registration";
-        } catch (WrongPasswordFormatException e) {
-            message = "Пароль должен содержать строчные, прописные буквы, а также знаки арифметических операций, и должен быть > 3-х символов!";
-            model.addAttribute("message", message);
-            return "users/registration";
-        }
-        model.addAttribute("message", message);
-        return "users/change-password";
     }
 
     @GetMapping("/about-us")

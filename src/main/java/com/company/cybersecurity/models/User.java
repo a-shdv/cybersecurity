@@ -32,7 +32,7 @@ public class User implements UserDetails {
     @Size(min = 0, max = 255, message = "Электронная не может превышать 255 символов!")
     private String email;
 
-    @Size(min = 0, max = 255, message = "Имя пользователя не может превышать 255 символов!")
+    @Size(min = 0, max = 255, message = "Пароль не может превышать 255 символов!")
     private String password;
 
     private boolean isAccountNonLocked = true;
@@ -42,6 +42,7 @@ public class User implements UserDetails {
     private LocalDateTime passwordLastChanged;
 
     private boolean isPasswordNotRestricted = true;
+    private boolean isPasswordNotExpired = true;
 
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "user_id"))
@@ -52,6 +53,10 @@ public class User implements UserDetails {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    public boolean getEnabled() {
+        return this.isEnabled;
     }
 
     @Override
@@ -71,30 +76,22 @@ public class User implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-//        if (isPasswordRestricted) {
-//            return false;
-//        }
+        if (!isPasswordNotExpired)
+            return false;
         if (passwordLastChanged != null) {
             LocalDateTime now = LocalDateTime.now();
             long daysSinceLastChange = ChronoUnit.DAYS.between(passwordLastChanged, now);
             return daysSinceLastChange <= 30;
         }
-
         return true;
     }
 
     @Override
     public boolean isEnabled() {
-        if (!isEnabled)
-            return false;
-        if (!isPasswordNotRestricted)
-            return false;
-        return true;
+        return isEnabled && isPasswordNotRestricted && isPasswordNotExpired;
     }
 
-    public boolean isPasswordNotRestricted() {
-        return isPasswordNotRestricted;
-    }
+
 
     public void setPasswordNotRestricted(boolean passwordNotRestricted) {
         this.isPasswordNotRestricted = passwordNotRestricted;
