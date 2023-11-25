@@ -1,5 +1,6 @@
 package com.company.cybersecurity.services;
 
+import com.company.cybersecurity.configs.ShaPasswordEncoder;
 import com.company.cybersecurity.exceptions.*;
 import com.company.cybersecurity.models.Role;
 import com.company.cybersecurity.models.User;

@@ -1,2 +1,0 @@
-User(id=1, username=user, email=user@user.com, password=BPiZbadjt6lpsQKO4wB1aerzpjVIbdqyEdUSyFud+Ps=, isAccountNonLocked=false, isEnabled=true, passwordLastChanged=2023-11-25T02:12:47.720834, isPasswordNotRestricted=true, isPasswordNotExpired=true, roles=[USER])
-User(id=2, username=admin, email=admin@admin.com, password=jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=, isAccountNonLocked=true, isEnabled=true, passwordLastChanged=2023-11-25T02:12:47.722352, isPasswordNotRestricted=true, isPasswordNotExpired=true, roles=[ADMIN])
