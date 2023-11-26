@@ -1,34 +1,28 @@
 package com.company.cybersecurity;
+
 import com.company.cybersecurity.config.StorageProperties;
+import com.company.cybersecurity.utils.SHAUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+
 @SpringBootApplication
 @EnableConfigurationProperties(StorageProperties.class)
 public class CybersecurityApplication {
     public static void main(String[] args) {
+        SHAUtil sha = new SHAUtil();
+        String filePath = "/Users/a-shdv/IdeaProjects/uploads/decrypted/Doc.docx";
+        try {
+            String sha1hash = sha.hashFile(filePath);
+            System.out.println("SHA-1 Hash Code in Hexadecimal Format: " + sha1hash);
+        } catch (NoSuchAlgorithmException | IOException e) {
+            e.printStackTrace();  ;
+        }
+
         SpringApplication.run(CybersecurityApplication.class, args);
-//        String filePath = "users-credentials.txt";
-//        try {
-//            MessageDigest digest = MessageDigest.getInstance("SHA-1");
-//            byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
-//            byte[] encodedhash = digest.digest(fileBytes);
-//
-//            StringBuilder hexString = new StringBuilder(2 * encodedhash.length);
-//            for (byte b : encodedhash) {
-//                String hex = Integer.toHexString(0xff & b);
-//                if(hex.length() == 1)
-//                    hexString.append('0');
-//                hexString.append(hex);
-//            }
-//            String sha1hash = hexString.toString();
-//
-//            System.out.println("SHA-1 Hash Code in Hexadecimal Format: " + sha1hash);
-//
-//        } catch (NoSuchAlgorithmException | IOException e) {
-//            e.printStackTrace();
-//        }
     }
 }

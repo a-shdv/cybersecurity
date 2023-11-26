@@ -7,11 +7,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.NoSuchAlgorithmException;
 import java.util.stream.Stream;
 
 import com.company.cybersecurity.config.StorageProperties;
 import com.company.cybersecurity.exceptions.StorageException;
 import com.company.cybersecurity.exceptions.StorageFileNotFoundException;
+import com.company.cybersecurity.utils.SHAUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
@@ -28,7 +30,7 @@ public class StorageServiceImpl implements StorageService {
     @Autowired
     public StorageServiceImpl(@Qualifier("storage-com.company.cybersecurity.config.StorageProperties") StorageProperties properties) {
 
-        if(properties.getLocation().trim().length() == 0){
+        if (properties.getLocation().trim().length() == 0) {
             throw new StorageException("File upload location can not be Empty.");
         }
 
@@ -44,6 +46,7 @@ public class StorageServiceImpl implements StorageService {
             Path destinationFile = this.rootLocation.resolve(
                             Paths.get(file.getOriginalFilename()))
                     .normalize().toAbsolutePath();
+
             if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
                 // This is a security check
                 throw new StorageException(
@@ -52,9 +55,18 @@ public class StorageServiceImpl implements StorageService {
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, destinationFile,
                         StandardCopyOption.REPLACE_EXISTING);
+                String fileHash = SHAUtil.hashFile(String.valueOf(destinationFile));
+
+                // Rename the file with the hash
+                var extension = destinationFile.toString().lastIndexOf(".");
+
+//                Path newDestinationFile = Paths.get(destinationFile.getParent().toString(), fileHash + "." + destinationFile.toString().substring(extension + 1));
+                Path newDestinationFile = Paths.get(destinationFile.getParent().toString(), fileHash + "." + destinationFile.toString().substring(extension + 1));
+                Files.move(destinationFile, newDestinationFile, StandardCopyOption.REPLACE_EXISTING);
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new StorageException("Failed to store file.", e);
         }
     }
@@ -65,8 +77,7 @@ public class StorageServiceImpl implements StorageService {
             return Files.walk(this.rootLocation, 1)
                     .filter(path -> !path.equals(this.rootLocation))
                     .map(this.rootLocation::relativize);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new StorageException("Failed to read stored files", e);
         }
 
@@ -84,14 +95,12 @@ public class StorageServiceImpl implements StorageService {
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
                 return resource;
-            }
-            else {
+            } else {
                 throw new StorageFileNotFoundException(
                         "Could not read file: " + filename);
 
             }
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             throw new StorageFileNotFoundException("Could not read file: " + filename, e);
         }
     }
@@ -105,8 +114,7 @@ public class StorageServiceImpl implements StorageService {
     public void init() {
         try {
             Files.createDirectories(rootLocation);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new StorageException("Could not initialize storage", e);
         }
     }

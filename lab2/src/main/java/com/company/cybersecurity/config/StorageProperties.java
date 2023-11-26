@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("storage")
 public class StorageProperties {
 
-    @Value("${fileUpload.path}")
+    @Value("${decryptedFileUpload.path}")
     private String location;
 
     public String getLocation() {

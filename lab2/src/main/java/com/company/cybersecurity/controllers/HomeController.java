@@ -2,6 +2,7 @@ package com.company.cybersecurity.controllers;
 
 import com.company.cybersecurity.exceptions.StorageFileNotFoundException;
 import com.company.cybersecurity.services.StorageService;
+import com.company.cybersecurity.utils.SHAUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.stream.Collectors;
 
 @Controller
@@ -30,7 +32,7 @@ public class HomeController {
 
         model.addAttribute("files", storageService.loadAll().map(
                         path -> MvcUriComponentsBuilder.fromMethodName(HomeController.class,
-                                "serveFile", path.getFileName().toString()).build().toUri().toString())
+                                "serveFile",  path.getFileName().toString()).build().toUri().toString())
                 .collect(Collectors.toList()));
 
         return "home";
@@ -38,7 +40,7 @@ public class HomeController {
 
     @GetMapping("/files/{filename:.+}")
     @ResponseBody
-    public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
+    public ResponseEntity<String> serveFile(@PathVariable String filename) throws NoSuchAlgorithmException, IOException {
 
         Resource file = storageService.loadAsResource(filename);
 
@@ -46,7 +48,7 @@ public class HomeController {
             return ResponseEntity.notFound().build();
 
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+                "attachment; filename=\"" + file.getFilename() + "\"").body(filename);
     }
 
     @PostMapping("/")
@@ -63,4 +65,5 @@ public class HomeController {
     @ExceptionHandler(StorageFileNotFoundException.class)
     public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
         return ResponseEntity.notFound().build();
-    }}
+    }
+}

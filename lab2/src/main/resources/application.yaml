@@ -1,4 +1,4 @@
-fileUpload:
+decryptedFileUpload:
   path: "/Users/a-shdv/IdeaProjects/uploads"
 spring:
   servlet:
