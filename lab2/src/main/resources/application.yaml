@@ -1,18 +1,7 @@
+decryptedFileUpload:
+  path: "/Users/a-shdv/IdeaProjects/uploads"
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/cybersecurity_db
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
-
-  liquibase:
-    url: jdbc:postgresql://localhost:5432/cybersecurity_db
-    user: postgres
-    password: postgres
-    change-log: liquibase/db.changelog-master.yaml
-    enabled: true
-
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: false
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
