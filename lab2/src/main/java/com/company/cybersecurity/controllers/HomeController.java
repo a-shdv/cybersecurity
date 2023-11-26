@@ -44,15 +44,14 @@ public class HomeController {
 
     @GetMapping("/files/{filename:.+}")
     @ResponseBody
-    public ResponseEntity<String> serveFile(@PathVariable String filename) throws NoSuchAlgorithmException, IOException {
+    public ResponseEntity<Resource> serveFile(@PathVariable String filename) throws NoSuchAlgorithmException, IOException {
 
         Resource file = storageService.loadAsResource(filename);
 
         if (file == null)
             return ResponseEntity.notFound().build();
-
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + file.getFilename() + "\"").body(filename);
+                "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
     @PostMapping("/")
