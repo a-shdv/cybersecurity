@@ -58,9 +58,7 @@ public class StorageServiceImpl implements StorageService {
                 String fileHash = SHAUtil.hashFile(String.valueOf(destinationFile));
 
                 // Rename the file with the hash
-                var extension = destinationFile.toString().lastIndexOf(".");
-
-//                Path newDestinationFile = Paths.get(destinationFile.getParent().toString(), fileHash + "." + destinationFile.toString().substring(extension + 1));
+                int extension = destinationFile.toString().lastIndexOf(".");
                 Path newDestinationFile = Paths.get(destinationFile.getParent().toString(), fileHash + "." + destinationFile.toString().substring(extension + 1));
                 Files.move(destinationFile, newDestinationFile, StandardCopyOption.REPLACE_EXISTING);
             } catch (NoSuchAlgorithmException e) {

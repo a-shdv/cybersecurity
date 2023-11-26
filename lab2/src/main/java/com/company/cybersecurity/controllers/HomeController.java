@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
@@ -30,11 +31,14 @@ public class HomeController {
     @GetMapping("/")
     public String listUploadedFiles(Model model) throws IOException {
 
-        model.addAttribute("files", storageService.loadAll().map(
-                        path -> MvcUriComponentsBuilder.fromMethodName(HomeController.class,
-                                "serveFile",  path.getFileName().toString()).build().toUri().toString())
-                .collect(Collectors.toList()));
-
+        List<String> files = storageService.loadAll()
+                .filter(path -> !path.getFileName().toString().equals(".DS_Store"))
+                .map(path ->
+                        MvcUriComponentsBuilder
+                                .fromMethodName(HomeController.class, "serveFile", path.getFileName().toString())
+                                .build().toUri().toString())
+                .collect(Collectors.toList());
+        model.addAttribute("files", files);
         return "home";
     }
 

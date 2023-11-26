@@ -14,15 +14,6 @@ import java.security.NoSuchAlgorithmException;
 @EnableConfigurationProperties(StorageProperties.class)
 public class CybersecurityApplication {
     public static void main(String[] args) {
-        SHAUtil sha = new SHAUtil();
-        String filePath = "/Users/a-shdv/IdeaProjects/uploads/decrypted/Doc.docx";
-        try {
-            String sha1hash = sha.hashFile(filePath);
-            System.out.println("SHA-1 Hash Code in Hexadecimal Format: " + sha1hash);
-        } catch (NoSuchAlgorithmException | IOException e) {
-            e.printStackTrace();  ;
-        }
-
         SpringApplication.run(CybersecurityApplication.class, args);
     }
 }
