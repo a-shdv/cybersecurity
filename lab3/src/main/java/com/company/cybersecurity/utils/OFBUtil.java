@@ -2,14 +2,13 @@ package com.company.cybersecurity.utils;
 
 import com.company.cybersecurity.config.StorageProperties;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.*;
 
@@ -31,11 +30,10 @@ public class OFBUtil {
         }
     }
 
-    public static void encryptFile(File inputFile, String encryptedFilePath) throws IOException, IllegalBlockSizeException, BadPaddingException {
-        FileInputStream inputStream = new FileInputStream(inputFile.getAbsolutePath());
-
+    public static void encryptFile(InputStream inputStream, String encryptedFilePath) throws IOException, IllegalBlockSizeException, BadPaddingException {
+//        FileInputStream inputStream = new FileInputStream(Paths.get(String.valueOf(inputFile)).toFile().getAbsolutePath());
         FileOutputStream outputStream = new FileOutputStream(encryptedFilePath);
-        byte[] buffer = new byte[(int) Paths.get(inputFile.getAbsolutePath()).toFile().length()];
+        byte[] buffer = new byte[(int) inputStream.available()];
         int numOfBytes;
         while ((numOfBytes = inputStream.read(buffer)) != -1) {
             byte[] output = cipher.update(buffer, 0, numOfBytes);

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -58,8 +59,8 @@ public class StorageServiceImpl implements StorageService {
             }
             int extensionIdx = file.getOriginalFilename().toString().lastIndexOf(".");
             String extension = "." + file.getOriginalFilename().toString().substring(extensionIdx + 1);
-            OFBUtil.encryptFile(file.getResource().getFile(), encryptedRootLocation + "\\" + file.getOriginalFilename() + extension);
-            OFBUtil.decryptFile(encryptedRootLocation + "\\encrypted" + extension, decryptedRootLocation + "\\" + file.getOriginalFilename() + extension);
+            OFBUtil.encryptFile(file.getInputStream(), encryptedRootLocation + "\\" + file.getOriginalFilename() + extension);
+            OFBUtil.decryptFile(encryptedRootLocation + "\\" + file.getOriginalFilename() + extension, decryptedRootLocation + "\\" + file.getOriginalFilename() + extension);
         } catch (Exception ex) {
             ex.getMessage();
         }
