@@ -27,19 +27,35 @@ public class HomeController {
         this.storageService = storageService;
     }
 
-    @GetMapping("/")
-    public String listUploadedFiles(Model model) throws IOException {
+//    @GetMapping("/encrypted")
+//    public String listEncryptedFiles(Model model) throws IOException {
+//
+//        List<String> files = storageService
+//                .loadAllEncrypted()
+//                .filter(path -> !path.getFileName().toString().equals(".DS_Store"))
+//                .map(path ->
+//                        MvcUriComponentsBuilder
+//                                .fromMethodName(HomeController.class, "serveFile", path.getFileName().toString())
+//                                .build().toUri().toString())
+//                .collect(Collectors.toList());
+//        model.addAttribute("files", files);
+//        return "encrypt";
+//    }
 
-        List<String> files = storageService.loadAll()
-                .filter(path -> !path.getFileName().toString().equals(".DS_Store"))
-                .map(path ->
-                        MvcUriComponentsBuilder
-                                .fromMethodName(HomeController.class, "serveFile", path.getFileName().toString())
-                                .build().toUri().toString())
-                .collect(Collectors.toList());
-        model.addAttribute("files", files);
-        return "home";
-    }
+//    @GetMapping("/decrypted")
+//    public String listDecryptedFiles(Model model) throws IOException {
+//
+//        List<String> files = storageService
+//                .loadAllDecrypted()
+//                .filter(path -> !path.getFileName().toString().equals(".DS_Store"))
+//                .map(path ->
+//                        MvcUriComponentsBuilder
+//                                .fromMethodName(HomeController.class, "serveFile", path.getFileName().toString())
+//                                .build().toUri().toString())
+//                .collect(Collectors.toList());
+//        model.addAttribute("files", files);
+//        return "decrypt";
+//    }
 
     @GetMapping("/files/{filename:.+}")
     @ResponseBody
@@ -54,7 +70,16 @@ public class HomeController {
     }
 
     @GetMapping("/encrypt")
-    public String encryptFileUpload() {
+    public String encryptFileUpload(Model model) {
+        List<String> files = storageService
+                .loadAllEncrypted()
+                .filter(path -> !path.getFileName().toString().equals(".DS_Store"))
+                .map(path ->
+                        MvcUriComponentsBuilder
+                                .fromMethodName(HomeController.class, "serveFile", path.getFileName().toString())
+                                .build().toUri().toString())
+                .collect(Collectors.toList());
+        model.addAttribute("files", files);
         return "encrypt";
     }
 
@@ -69,7 +94,16 @@ public class HomeController {
     }
 
     @GetMapping("/decrypt")
-    public String decryptFileUpload() {
+    public String decryptFileUpload(Model model) {
+        List<String> files = storageService
+                .loadAllDecrypted()
+                .filter(path -> !path.getFileName().toString().equals(".DS_Store"))
+                .map(path ->
+                        MvcUriComponentsBuilder
+                                .fromMethodName(HomeController.class, "serveFile", path.getFileName().toString())
+                                .build().toUri().toString())
+                .collect(Collectors.toList());
+        model.addAttribute("files", files);
         return "decrypt";
     }
 

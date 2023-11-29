@@ -92,11 +92,23 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public Stream<Path> loadAll() {
+    public Stream<Path> loadAllEncrypted() {
         try {
             return Files.walk(this.encryptedRootLocation, 1)
                     .filter(path -> !path.equals(this.encryptedRootLocation))
                     .map(this.encryptedRootLocation::relativize);
+        } catch (IOException e) {
+            throw new StorageException("Failed to read stored files", e);
+        }
+
+    }
+
+    @Override
+    public Stream<Path> loadAllDecrypted() {
+        try {
+            return Files.walk(this.decryptedRootLocation, 1)
+                    .filter(path -> !path.equals(this.decryptedRootLocation))
+                    .map(this.decryptedRootLocation::relativize);
         } catch (IOException e) {
             throw new StorageException("Failed to read stored files", e);
         }

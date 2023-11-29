@@ -13,7 +13,8 @@ public interface StorageService {
     void storeAndEncrypt(MultipartFile file);
     void storeAndDecrypt(MultipartFile file);
 
-    Stream<Path> loadAll();
+    Stream<Path> loadAllEncrypted();
+    Stream<Path> loadAllDecrypted();
 
     Path load(String filename);
 
