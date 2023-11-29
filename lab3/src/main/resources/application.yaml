@@ -1,0 +1,20 @@
+encryptedFileUpload:
+  path: /Users/a-shdv/IdeaProjects/uploads/encrypted/
+decryptedFileUpload:
+  path: /Users/a-shdv/IdeaProjects/uploads/decrypted/
+spring:
+  servlet:
+    multipart:
+      max-file-size: 5000MB
+      max-request-size: 5000MB
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cybersecurity_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
