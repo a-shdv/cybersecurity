@@ -53,15 +53,28 @@ public class HomeController {
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
-    @PostMapping("/")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file,
-                                   RedirectAttributes redirectAttributes) {
+    @GetMapping("/encrypt")
+    public String encryptFileUpload() {
 
-        storageService.store(file);
-        redirectAttributes.addFlashAttribute("message",
-                "You successfully uploaded " + file.getOriginalFilename() + "!");
+        return "encrypt";
+    }
 
-        return "redirect:/";
+    @PostMapping("/encrypt")
+    public String encryptFileUpload(Model model) {
+
+        return "home";
+    }
+
+    @GetMapping("/decrypt")
+    public String decryptFileUpload() {
+
+        return "decrypt";
+    }
+
+    @PostMapping("/decrypt")
+    public String decryptFileUpload(Model model) {
+
+        return "home";
     }
 
     @ExceptionHandler(StorageFileNotFoundException.class)

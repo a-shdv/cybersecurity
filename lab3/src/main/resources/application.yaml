@@ -1,5 +1,5 @@
 decryptedFileUpload:
-  path: C:\Users\?????\IdeaProjects\trash\uploads
+  path: C:\Users\Антон\IdeaProjects\trash\uploads
 spring:
   servlet:
     multipart:

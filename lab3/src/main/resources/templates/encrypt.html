@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Главная</title>
+</head>
+<body>
+<!--Справочная информация-->
+<h2>Главная</h2>
+<p><b>Автор программы:</b> Шадаев А.Р.</p>
+<p><b>Вариант:</b> №4</p>
+<p><b>Задание:</b>Алгоритм DES в режиме OFB (Output Feedback) - обратная связь по выходу.</p>
+
+<div>
+    <form method="POST" enctype="multipart/form-data" action="/encrypt">
+        <table>
+            <!--Загрузка файла-->
+            <tr>
+                <td><input type="file" name="file"/></td>
+            </tr>
+            <!--Кнопка "Отправить"-->
+            <tr>
+                <td><input type="submit" value="Загрузить"/></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<!--<div>-->
+<!--    <ul>-->
+<!--        <div th:if="${files.isEmpty()}">Нет доступных файлов!</div>-->
+<!--        <li th:each="file : ${files}">-->
+<!--            <a th:href="${file}" th:text="${file}"/> <a href=""></a>-->
+<!--        </li>-->
+<!--    </ul>-->
+<!--</div>-->
+<br>
+<button onclick="history.back()">Назад</button>
+</body>
+</html>
