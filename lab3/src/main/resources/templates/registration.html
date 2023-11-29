@@ -13,7 +13,7 @@
         color: red;
     }
 </style>
-<h1>Авторизоваться</h1>
+<h1>Зарегистрироваться</h1>
 <div th:if="${errorMessage}" th:text="${errorMessage}" style="color: red"></div>
 <div th:if="${successMessage}" th:text="${successMessage}" style="color: green"></div>
 <form th:action="@{/registration}" method="post" th:model="${registrationDto}">

@@ -1,9 +1,7 @@
 package com.company.cybersecurity.models;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -14,6 +12,8 @@ import java.util.Collection;
 @Table(name="users")
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class User implements UserDetails {
 
     @Id
