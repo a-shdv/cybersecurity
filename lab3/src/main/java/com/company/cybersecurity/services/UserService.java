@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
@@ -21,6 +23,10 @@ public class UserService implements UserDetailsService {
     public UserService(UserRepository userRepository, PasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 
     public void saveUser(User user) {

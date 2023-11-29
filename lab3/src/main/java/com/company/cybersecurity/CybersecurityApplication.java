@@ -3,6 +3,7 @@ package com.company.cybersecurity;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -20,11 +21,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 
 @SpringBootApplication
+@EnableAspectJAutoProxy
 public class CybersecurityApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(CybersecurityApplication.class, args);
     }
-
-
 }

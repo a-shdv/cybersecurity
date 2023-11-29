@@ -1,0 +1,2 @@
+User(id=10, username=test, password=$2a$10$2oidAE//4hm4MjodMnJzpO4fH82YMJQtAuHGWHEGy6VsDYLg3iN7.)
+User(id=11, username=user, password=$2a$10$xyH42JzaAwP3LCqMn41myePUTBu/4sSL9thLUtkHniMg/o5uzpxWa)
