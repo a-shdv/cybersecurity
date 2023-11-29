@@ -31,11 +31,11 @@ public class OFBUtil {
         }
     }
 
-    public static void encryptFile(String inputFilePath, String encryptedFilePath) throws IOException, IllegalBlockSizeException, BadPaddingException {
-        FileInputStream inputStream = new FileInputStream(inputFilePath);
+    public static void encryptFile(File inputFile, String encryptedFilePath) throws IOException, IllegalBlockSizeException, BadPaddingException {
+        FileInputStream inputStream = new FileInputStream(inputFile.getAbsolutePath());
 
         FileOutputStream outputStream = new FileOutputStream(encryptedFilePath);
-        byte[] buffer = new byte[(int) Paths.get(inputFilePath).toFile().length()];
+        byte[] buffer = new byte[(int) Paths.get(inputFile.getAbsolutePath()).toFile().length()];
         int numOfBytes;
         while ((numOfBytes = inputStream.read(buffer)) != -1) {
             byte[] output = cipher.update(buffer, 0, numOfBytes);

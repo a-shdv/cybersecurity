@@ -58,14 +58,8 @@ public class StorageServiceImpl implements StorageService {
             }
             int extensionIdx = file.getOriginalFilename().toString().lastIndexOf(".");
             String extension = "." + file.getOriginalFilename().toString().substring(extensionIdx + 1);
-            try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, destinationFile,
-                        StandardCopyOption.REPLACE_EXISTING);
-            } catch (Exception ex) {
-                ex.getMessage();
-            }
-            OFBUtil.encryptFile(String.valueOf(destinationFile), String.valueOf(encryptedRootLocation) + "\\encrypted" + extension);
-            OFBUtil.decryptFile(String.valueOf(encryptedRootLocation) + "\\encrypted" + extension, String.valueOf(decryptedRootLocation) + "\\decrypted" + extension);
+            OFBUtil.encryptFile(file.getResource().getFile(), encryptedRootLocation + "\\" + file.getOriginalFilename() + extension);
+            OFBUtil.decryptFile(encryptedRootLocation + "\\encrypted" + extension, decryptedRootLocation + "\\" + file.getOriginalFilename() + extension);
         } catch (Exception ex) {
             ex.getMessage();
         }
