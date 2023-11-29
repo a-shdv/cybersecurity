@@ -40,6 +40,8 @@
 <div sec:authorize="isAnonymous()">
     <a th:href="@{/login}">Авторизоваться</a> |
     <a th:href="@{/registration}">Зарегистрироваться</a>
+    <br>
+    <a th:href="@{/login-file}">Авторизоваться с помощью файла</a>
 </div>
 <div sec:authorize="isAuthenticated()">
     <span th:text="${#authentication.name}"></span>
