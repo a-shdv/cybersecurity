@@ -1,16 +1,20 @@
 package com.company.cybersecurity.utils;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.*;
 
 public class OFBUtil {
     private static Cipher cipher;
+    @Value("${inputFileUpload.path}")
+    private static String inputFilePath;
 
     static {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
@@ -27,8 +31,8 @@ public class OFBUtil {
     }
 
     public static void encryptFile(String path) throws IOException, IllegalBlockSizeException, BadPaddingException {
-        FileInputStream inputStream = new FileInputStream("C:\\Users\\Антон\\IdeaProjects\\test\\lab3\\input.txt");
-        FileOutputStream outputStream = new FileOutputStream("encrypted.txt");
+        FileInputStream inputStream = new FileInputStream(path);
+        FileOutputStream outputStream = new FileOutputStream(path);
         byte[] buffer = new byte[1024];
         int bytesRead;
         while ((bytesRead = inputStream.read(buffer)) != -1) {
@@ -65,7 +69,7 @@ public class OFBUtil {
         inputStream.close();
         outputStream.close();
     }
-//
+
 //    public String encrypt(String plaintext) throws Exception {
 //        Cipher cipher = Cipher.getInstance("DES/OFB/NoPadding");
 //        cipher.init(Cipher.ENCRYPT_MODE, this.secretKey, this.ivParameterSpec);
