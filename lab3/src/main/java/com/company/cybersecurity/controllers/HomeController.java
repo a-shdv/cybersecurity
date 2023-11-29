@@ -27,36 +27,6 @@ public class HomeController {
         this.storageService = storageService;
     }
 
-//    @GetMapping("/encrypted")
-//    public String listEncryptedFiles(Model model) throws IOException {
-//
-//        List<String> files = storageService
-//                .loadAllEncrypted()
-//                .filter(path -> !path.getFileName().toString().equals(".DS_Store"))
-//                .map(path ->
-//                        MvcUriComponentsBuilder
-//                                .fromMethodName(HomeController.class, "serveFile", path.getFileName().toString())
-//                                .build().toUri().toString())
-//                .collect(Collectors.toList());
-//        model.addAttribute("files", files);
-//        return "encrypt";
-//    }
-
-//    @GetMapping("/decrypted")
-//    public String listDecryptedFiles(Model model) throws IOException {
-//
-//        List<String> files = storageService
-//                .loadAllDecrypted()
-//                .filter(path -> !path.getFileName().toString().equals(".DS_Store"))
-//                .map(path ->
-//                        MvcUriComponentsBuilder
-//                                .fromMethodName(HomeController.class, "serveFile", path.getFileName().toString())
-//                                .build().toUri().toString())
-//                .collect(Collectors.toList());
-//        model.addAttribute("files", files);
-//        return "decrypt";
-//    }
-
     @GetMapping("/files/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) throws NoSuchAlgorithmException, IOException {
