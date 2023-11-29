@@ -55,12 +55,15 @@ public class HomeController {
 
     @GetMapping("/encrypt")
     public String encryptFileUpload() {
-
         return "encrypt";
     }
 
     @PostMapping("/encrypt")
-    public String encryptFileUpload(Model model) {
+    public String encryptFileUpload(@RequestParam("file") MultipartFile file,
+                                    RedirectAttributes redirectAttributes) {
+        storageService.storeAndEncrypt(file);
+        redirectAttributes.addFlashAttribute("message",
+                "You successfully uploaded " + file.getOriginalFilename() + "!");
 
         return "home";
     }

@@ -9,14 +9,24 @@ import org.springframework.stereotype.Component;
 public class StorageProperties {
 
     @Value("${decryptedFileUpload.path}")
-    private String location;
+    private String decryptedFileUpload;
 
-    public String getLocation() {
-        return location;
+    @Value("${encryptedFileUpload.path}")
+    private String encryptedFileUpload;
+
+    public String getDecryptedFileUpload() {
+        return decryptedFileUpload;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setDecryptedFileUpload(String decryptedFileUpload) {
+        this.decryptedFileUpload = decryptedFileUpload;
     }
 
+    public String getEncryptedFileUpload() {
+        return encryptedFileUpload;
+    }
+
+    public void setEncryptedFileUpload(String encryptedFileUpload) {
+        this.encryptedFileUpload = encryptedFileUpload;
+    }
 }
