@@ -27,6 +27,11 @@ public class HomeController {
         this.storageService = storageService;
     }
 
+    @GetMapping("/")
+    public String home() {
+        return "home";
+    }
+
     @GetMapping("/files/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) throws NoSuchAlgorithmException, IOException {

@@ -1,11 +1,20 @@
-inputFileUpload:
-  path: C:\Users\Антон\Desktop\test\lab3\input.txt
 encryptedFileUpload:
-  path: C:\Users\Антон\IdeaProjects\trash\uploads\encrypted
+  path: /Users/a-shdv/IdeaProjects/uploads/encrypted
 decryptedFileUpload:
-  path: C:\Users\Антон\IdeaProjects\trash\uploads\decrypted
+  path: /Users/a-shdv/IdeaProjects/uploads/decrypted
 spring:
   servlet:
     multipart:
       max-file-size: 5000MB
       max-request-size: 5000MB
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cybersecurity_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
