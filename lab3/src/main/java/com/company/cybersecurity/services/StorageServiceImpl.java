@@ -60,7 +60,6 @@ public class StorageServiceImpl implements StorageService {
 //            int extensionIdx = file.getOriginalFilename().toString().lastIndexOf(".");
 //            String extension = "." + file.getOriginalFilename().toString().substring(extensionIdx + 1);
             OFBUtil.encryptFile(file.getInputStream(), encryptedRootLocation + "\\" + file.getOriginalFilename());
-            OFBUtil.decryptFile(encryptedRootLocation + "\\" + file.getOriginalFilename(), decryptedRootLocation + "\\" + file.getOriginalFilename());
         } catch (Exception ex) {
             ex.getMessage();
         }
@@ -68,7 +67,23 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public void storeAndDecrypt(MultipartFile file) {
+        try {
+            if (file.isEmpty()) {
+                throw new StorageException("Failed to store empty file.");
+            }
+            Path destinationFile = this.encryptedRootLocation.resolve(
+                            Paths.get(file.getOriginalFilename()))
+                    .normalize().toAbsolutePath();
 
+            if (!destinationFile.getParent().equals(this.encryptedRootLocation.toAbsolutePath())) {
+                // This is a security check
+                throw new StorageException(
+                        "Cannot store file outside current directory.");
+            }
+            OFBUtil.decryptFile(encryptedRootLocation + "\\" + file.getOriginalFilename(), decryptedRootLocation + "\\" + file.getOriginalFilename());
+        } catch (Exception ex) {
+            ex.getMessage();
+        }
     }
 // catch (NoSuchAlgorithmException e) {
 //                throw new RuntimeException(e);

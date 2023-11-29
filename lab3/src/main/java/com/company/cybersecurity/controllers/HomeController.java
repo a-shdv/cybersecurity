@@ -70,13 +70,15 @@ public class HomeController {
 
     @GetMapping("/decrypt")
     public String decryptFileUpload() {
-
         return "decrypt";
     }
 
     @PostMapping("/decrypt")
-    public String decryptFileUpload(Model model) {
-
+    public String decryptFileUpload(@RequestParam("file") MultipartFile file,
+                                    RedirectAttributes redirectAttributes) {
+        storageService.storeAndDecrypt(file);
+        redirectAttributes.addFlashAttribute("message",
+                "You successfully uploaded " + file.getOriginalFilename() + "!");
         return "redirect:/";
     }
 
