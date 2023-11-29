@@ -57,10 +57,10 @@ public class StorageServiceImpl implements StorageService {
                 throw new StorageException(
                         "Cannot store file outside current directory.");
             }
-            int extensionIdx = file.getOriginalFilename().toString().lastIndexOf(".");
-            String extension = "." + file.getOriginalFilename().toString().substring(extensionIdx + 1);
-            OFBUtil.encryptFile(file.getInputStream(), encryptedRootLocation + "\\" + file.getOriginalFilename() + extension);
-            OFBUtil.decryptFile(encryptedRootLocation + "\\" + file.getOriginalFilename() + extension, decryptedRootLocation + "\\" + file.getOriginalFilename() + extension);
+//            int extensionIdx = file.getOriginalFilename().toString().lastIndexOf(".");
+//            String extension = "." + file.getOriginalFilename().toString().substring(extensionIdx + 1);
+            OFBUtil.encryptFile(file.getInputStream(), encryptedRootLocation + "\\" + file.getOriginalFilename());
+            OFBUtil.decryptFile(encryptedRootLocation + "\\" + file.getOriginalFilename(), decryptedRootLocation + "\\" + file.getOriginalFilename());
         } catch (Exception ex) {
             ex.getMessage();
         }

@@ -65,7 +65,7 @@ public class HomeController {
         redirectAttributes.addFlashAttribute("message",
                 "You successfully uploaded " + file.getOriginalFilename() + "!");
 
-        return "home";
+        return "redirect:/";
     }
 
     @GetMapping("/decrypt")
@@ -77,7 +77,7 @@ public class HomeController {
     @PostMapping("/decrypt")
     public String decryptFileUpload(Model model) {
 
-        return "home";
+        return "redirect:/";
     }
 
     @ExceptionHandler(StorageFileNotFoundException.class)
