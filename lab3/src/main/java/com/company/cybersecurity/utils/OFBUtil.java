@@ -1,5 +1,6 @@
 package com.company.cybersecurity.utils;
 
+import com.company.cybersecurity.config.StorageProperties;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.crypto.*;
@@ -14,10 +15,9 @@ import java.security.*;
 
 public class OFBUtil {
     private static Cipher cipher;
-    @Value("${encryptedFileUpload.path}")
-    public static String encryptedFilePath;
 
     static {
+        StorageProperties properties = new StorageProperties();
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         SecretKeySpec keySpec = new SecretKeySpec(new byte[]{0x10, 0x10, 0x01, 0x04, 0x01, 0x01, 0x01, 0x02}, "DES");
         IvParameterSpec ivSpec = new IvParameterSpec(new byte[]{0x10, 0x10, 0x01, 0x04, 0x01, 0x01, 0x01, 0x02});
@@ -31,10 +31,11 @@ public class OFBUtil {
         }
     }
 
-    public static void encryptFile(String path) throws IOException, IllegalBlockSizeException, BadPaddingException {
-        FileInputStream inputStream = new FileInputStream(path);
-        FileOutputStream outputStream = new FileOutputStream("C:\\Users\\Антон\\IdeaProjects\\trash\\uploads\\encrypted\\encrypted.txt");
-        byte[] buffer = new byte[(int) Paths.get(path).toFile().length()];
+    public static void encryptFile(String inputFilePath, String encryptedFilePath) throws IOException, IllegalBlockSizeException, BadPaddingException {
+        FileInputStream inputStream = new FileInputStream(inputFilePath);
+
+        FileOutputStream outputStream = new FileOutputStream(encryptedFilePath);
+        byte[] buffer = new byte[(int) Paths.get(inputFilePath).toFile().length()];
         int numOfBytes;
         while ((numOfBytes = inputStream.read(buffer)) != -1) {
             byte[] output = cipher.update(buffer, 0, numOfBytes);
@@ -50,9 +51,9 @@ public class OFBUtil {
         outputStream.close();
     }
 
-    public static void decryptFile(String path) throws IOException, IllegalBlockSizeException, BadPaddingException {
-        FileInputStream inputStream = new FileInputStream("C:\\Users\\Антон\\IdeaProjects\\trash\\uploads\\encrypted\\encrypted.txt");
-        FileOutputStream outputStream = new FileOutputStream("C:\\Users\\Антон\\IdeaProjects\\trash\\uploads\\encrypted\\decrypted.txt");
+    public static void decryptFile(String encryptedFilePath, String decryptedFilePath) throws IOException, IllegalBlockSizeException, BadPaddingException {
+        FileInputStream inputStream = new FileInputStream(encryptedFilePath);
+        FileOutputStream outputStream = new FileOutputStream(decryptedFilePath);
         byte[] buffer = new byte[1024];
         int bytesRead;
         byte[] outputBytes;
