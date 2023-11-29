@@ -17,12 +17,22 @@
         <tr>
             <!-- Имя пользователя -->
             <td>Имя пользователя:</td>
-            <td><input type='text' name='username' value=''></td>
+            <div th:if="${username != null}">
+                <td><input type='text' name='username' th:value='${username}'></td>
+            </div>
+            <div th:if="${username == null}">
+                <td><input type='text' name='username'></td>
+            </div>
         </tr>
         <tr>
             <!-- Пароль -->
             <td>Пароль:</td>
+            <div th:if="${password != null}">
+                <td><input type='password' name='password' th:value='${password}'></td>
+            </div>
+            <div th:if="${password == null}">
             <td><input type='password' name='password'/></td>
+            </div>
         </tr>
         <!-- Войти -->
         <tr>

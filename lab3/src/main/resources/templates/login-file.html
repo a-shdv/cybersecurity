@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Деканат: Авторизоваться</title>
+</head>
+<body>
+<h1>Авторизоваться</h1>
+<div th:if="${param.error}" style="color:red">
+    Неправильный логин или пароль
+</div>
+<pre>
+Формат логина и пароля в файле должны соответствовать следующему формату и быть с расширением .txt:
+    username: user
+    password: 12345
+</pre>
+
+<form method="post" enctype="multipart/form-data" action="/login-file">
+    <table>
+        <!--Загрузка файла-->
+        <tr>
+            <td><input type="file" name="file" accept=".txt"/></td>
+        </tr>
+        <!--Кнопка "Отправить"-->
+        <tr>
+            <td><input type="submit" value="Загрузить"/></td>
+        </tr>
+    </table>
+</form>
+
+<a th:href="@{/}">На главную</a>
+</body>
+</html>
