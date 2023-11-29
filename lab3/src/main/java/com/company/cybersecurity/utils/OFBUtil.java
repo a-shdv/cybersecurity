@@ -1,22 +1,24 @@
 package com.company.cybersecurity.utils;
 
-import com.company.cybersecurity.config.StorageProperties;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.crypto.*;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 
 public class OFBUtil {
     private static Cipher cipher;
 
     static {
-        StorageProperties properties = new StorageProperties();
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         SecretKeySpec keySpec = new SecretKeySpec(new byte[]{0x10, 0x10, 0x01, 0x04, 0x01, 0x01, 0x01, 0x02}, "DES");
         IvParameterSpec ivSpec = new IvParameterSpec(new byte[]{0x10, 0x10, 0x01, 0x04, 0x01, 0x01, 0x01, 0x02});
@@ -31,9 +33,8 @@ public class OFBUtil {
     }
 
     public static void encryptFile(InputStream inputStream, String encryptedFilePath) throws IOException, IllegalBlockSizeException, BadPaddingException {
-//        FileInputStream inputStream = new FileInputStream(Paths.get(String.valueOf(inputFile)).toFile().getAbsolutePath());
         FileOutputStream outputStream = new FileOutputStream(encryptedFilePath);
-        byte[] buffer = new byte[(int) inputStream.available()];
+        byte[] buffer = new byte[inputStream.available()];
         int numOfBytes;
         while ((numOfBytes = inputStream.read(buffer)) != -1) {
             byte[] output = cipher.update(buffer, 0, numOfBytes);
@@ -52,7 +53,7 @@ public class OFBUtil {
     public static void decryptFile(String encryptedFilePath, String decryptedFilePath) throws IOException, IllegalBlockSizeException, BadPaddingException {
         FileInputStream inputStream = new FileInputStream(encryptedFilePath);
         FileOutputStream outputStream = new FileOutputStream(decryptedFilePath);
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[inputStream.available()];
         int bytesRead;
         byte[] outputBytes;
 
@@ -69,20 +70,4 @@ public class OFBUtil {
         inputStream.close();
         outputStream.close();
     }
-
-//    public String encrypt(String plaintext) throws Exception {
-//        Cipher cipher = Cipher.getInstance("DES/OFB/NoPadding");
-//        cipher.init(Cipher.ENCRYPT_MODE, this.secretKey, this.ivParameterSpec);
-//
-//        byte[] encrypted = cipher.doFinal(plaintext.getBytes());
-//        return new String(Base64.encodeBase64(encrypted), StandardCharsets.UTF_8);
-//    }
-//
-//    public String decrypt(String ciphertext) throws Exception {
-//        Cipher cipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
-//        cipher.init(Cipher.DECRYPT_MODE, this.secretKey, this.ivParameterSpec);
-//
-//        byte[] decrypted = cipher.doFinal(Base64.decodeBase64(ciphertext.getBytes(StandardCharsets.UTF_8)));
-//        return new String(decrypted, StandardCharsets.UTF_8);
-//    }
 }

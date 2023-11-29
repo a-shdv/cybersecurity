@@ -4,6 +4,7 @@ import com.company.cybersecurity.config.StorageProperties;
 import com.company.cybersecurity.exceptions.StorageException;
 import com.company.cybersecurity.exceptions.StorageFileNotFoundException;
 import com.company.cybersecurity.utils.OFBUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,9 +22,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @Service
+@Slf4j
 public class StorageServiceImpl implements StorageService {
 
     private final Path decryptedRootLocation;
@@ -30,11 +35,11 @@ public class StorageServiceImpl implements StorageService {
     @Autowired
     public StorageServiceImpl(StorageProperties properties) {
 
-        if (properties.getDecryptedFileUpload().trim().length() == 0) {
+        if (properties.getDecryptedFileUpload().trim().isEmpty()) {
             throw new StorageException("File upload location can not be Empty.");
         }
 
-        if (properties.getEncryptedFileUpload().trim().length() == 0) {
+        if (properties.getEncryptedFileUpload().trim().isEmpty()) {
             throw new StorageException("File upload location can not be Empty.");
         }
 
@@ -49,7 +54,7 @@ public class StorageServiceImpl implements StorageService {
                 throw new StorageException("Failed to store empty file.");
             }
             Path destinationFile = this.encryptedRootLocation.resolve(
-                            Paths.get(file.getOriginalFilename()))
+                            Paths.get(Objects.requireNonNull(file.getOriginalFilename())))
                     .normalize().toAbsolutePath();
 
             if (!destinationFile.getParent().equals(this.encryptedRootLocation.toAbsolutePath())) {
@@ -60,8 +65,8 @@ public class StorageServiceImpl implements StorageService {
 //            int extensionIdx = file.getOriginalFilename().toString().lastIndexOf(".");
 //            String extension = "." + file.getOriginalFilename().toString().substring(extensionIdx + 1);
             OFBUtil.encryptFile(file.getInputStream(), encryptedRootLocation + "\\" + file.getOriginalFilename());
-        } catch (Exception ex) {
-            ex.getMessage();
+        } catch (IllegalBlockSizeException | IOException | BadPaddingException e) {
+            log.info(e.getMessage());
         }
     }
 
@@ -72,7 +77,7 @@ public class StorageServiceImpl implements StorageService {
                 throw new StorageException("Failed to store empty file.");
             }
             Path destinationFile = this.encryptedRootLocation.resolve(
-                            Paths.get(file.getOriginalFilename()))
+                            Paths.get(Objects.requireNonNull(file.getOriginalFilename())))
                     .normalize().toAbsolutePath();
 
             if (!destinationFile.getParent().equals(this.encryptedRootLocation.toAbsolutePath())) {
@@ -81,17 +86,10 @@ public class StorageServiceImpl implements StorageService {
                         "Cannot store file outside current directory.");
             }
             OFBUtil.decryptFile(encryptedRootLocation + "\\" + file.getOriginalFilename(), decryptedRootLocation + "\\" + file.getOriginalFilename());
-        } catch (Exception ex) {
-            ex.getMessage();
+        } catch (IllegalBlockSizeException | IOException | BadPaddingException e) {
+            log.info(e.getMessage());
         }
     }
-// catch (NoSuchAlgorithmException e) {
-//                throw new RuntimeException(e);
-//            }
-//        } catch (IOException e) {
-//            throw new StorageException("Failed to store file.", e);
-//        }
-
 
     @Override
     public Stream<Path> loadAll() {
