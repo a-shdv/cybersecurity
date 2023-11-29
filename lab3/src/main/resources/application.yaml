@@ -1,3 +1,5 @@
+inputFileUpload:
+  path: C:\Users\Антон\IdeaProjects\test\lab3\input.txt
 encryptedFileUpload:
   path: C:\Users\Антон\IdeaProjects\trash\uploads\encrypted
 decryptedFileUpload:

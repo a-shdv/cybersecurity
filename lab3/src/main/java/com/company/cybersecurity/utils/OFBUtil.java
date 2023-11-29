@@ -1,29 +1,69 @@
 package com.company.cybersecurity.utils;
 
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
+import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.security.*;
 
 public class OFBUtil {
-    private SecretKey secretKey;
-    private IvParameterSpec ivParameterSpec;
+    private static Cipher cipher;
 
-    public OFBUtil() throws NoSuchAlgorithmException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("DES");
-        keyGenerator.init(56);
-        this.secretKey = keyGenerator.generateKey();
+    static {
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+        SecretKeySpec keySpec = new SecretKeySpec(new byte[]{0x10, 0x10, 0x01, 0x04, 0x01, 0x01, 0x01, 0x02}, "DES");
+        IvParameterSpec ivSpec = new IvParameterSpec(new byte[]{0x10, 0x10, 0x01, 0x04, 0x01, 0x01, 0x01, 0x02});
 
-        byte[] iv = new byte[8];
-        SecureRandom random = new SecureRandom();
-        random.nextBytes(iv);
-        this.ivParameterSpec = new IvParameterSpec(iv);
+        try {
+            cipher = Cipher.getInstance("DES/OFB/NoPadding");
+            cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
+        } catch (NoSuchAlgorithmException | InvalidKeyException | NoSuchPaddingException |
+                 InvalidAlgorithmParameterException e) {
+            e.getMessage();
+        }
     }
 
-    public static String hashFile(String path) {
+    public static void encryptFile(String path) throws IOException, IllegalBlockSizeException, BadPaddingException {
+        FileInputStream inputStream = new FileInputStream("C:\\Users\\Антон\\IdeaProjects\\test\\lab3\\input.txt");
+        FileOutputStream outputStream = new FileOutputStream("encrypted.txt");
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            byte[] output = cipher.update(buffer, 0, bytesRead);
+            if (output != null) {
+                outputStream.write(output);
+            }
+        }
+        byte[] outputBytes = cipher.doFinal();
+        if (outputBytes != null) {
+            outputStream.write(outputBytes);
+        }
+        inputStream.close();
+        outputStream.close();
+    }
 
-        return path;
+    public static void decryptFile(String path) throws IOException, IllegalBlockSizeException, BadPaddingException {
+        FileInputStream inputStream = new FileInputStream("encrypted.txt");
+        FileOutputStream outputStream = new FileOutputStream("decrypted.txt");
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        byte[] outputBytes ;
+
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            byte[] output = cipher.update(buffer, 0, bytesRead);
+            if (output != null) {
+                outputStream.write(output);
+            }
+        }
+        outputBytes = cipher.doFinal();
+        if (outputBytes != null) {
+            outputStream.write(outputBytes);
+        }
+        inputStream.close();
+        outputStream.close();
     }
 //
 //    public String encrypt(String plaintext) throws Exception {
