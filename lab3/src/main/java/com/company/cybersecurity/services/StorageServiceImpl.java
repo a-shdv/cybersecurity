@@ -63,6 +63,7 @@ public class StorageServiceImpl implements StorageService {
                 ex.getMessage();
             }
             OFBUtil.encryptFile(String.valueOf(destinationFile));
+            OFBUtil.decryptFile(String.valueOf(destinationFile));
         } catch (Exception ex) {
             ex.getMessage();
         }

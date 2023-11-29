@@ -33,7 +33,7 @@ public class OFBUtil {
 
     public static void encryptFile(String path) throws IOException, IllegalBlockSizeException, BadPaddingException {
         FileInputStream inputStream = new FileInputStream(path);
-        FileOutputStream outputStream = new FileOutputStream("C:\\Users\\Антон\\IdeaProjects\\trash\\uploads\\encrypted\\test.txt");
+        FileOutputStream outputStream = new FileOutputStream("C:\\Users\\Антон\\IdeaProjects\\trash\\uploads\\encrypted\\encrypted.txt");
         byte[] buffer = new byte[(int) Paths.get(path).toFile().length()];
         int numOfBytes;
         while ((numOfBytes = inputStream.read(buffer)) != -1) {
@@ -51,8 +51,8 @@ public class OFBUtil {
     }
 
     public static void decryptFile(String path) throws IOException, IllegalBlockSizeException, BadPaddingException {
-        FileInputStream inputStream = new FileInputStream("encrypted.txt");
-        FileOutputStream outputStream = new FileOutputStream("decrypted.txt");
+        FileInputStream inputStream = new FileInputStream("C:\\Users\\Антон\\IdeaProjects\\trash\\uploads\\encrypted\\encrypted.txt");
+        FileOutputStream outputStream = new FileOutputStream("C:\\Users\\Антон\\IdeaProjects\\trash\\uploads\\encrypted\\decrypted.txt");
         byte[] buffer = new byte[1024];
         int bytesRead;
         byte[] outputBytes;
