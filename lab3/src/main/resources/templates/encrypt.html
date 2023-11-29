@@ -10,7 +10,9 @@
 <body>
 <!--Справочная информация-->
 <h2>Зашифровать файл</h2>
-<div th:each="file : ${files}" th:text="${file.toString()}"></div>
+<div th:each="file : ${files}"s>
+    <a th:text="${file}" th:href="${file}"></a>
+</div>
 <br>
 <!--<div th:if="${message}">-->
 <!--    <h2 th:text="${message}"/>-->

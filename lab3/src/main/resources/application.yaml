@@ -1,7 +1,7 @@
 encryptedFileUpload:
-  path: /Users/a-shdv/IdeaProjects/uploads/encrypted
+  path: /Users/a-shdv/IdeaProjects/uploads/encrypted/
 decryptedFileUpload:
-  path: /Users/a-shdv/IdeaProjects/uploads/decrypted
+  path: /Users/a-shdv/IdeaProjects/uploads/decrypted/
 spring:
   servlet:
     multipart:

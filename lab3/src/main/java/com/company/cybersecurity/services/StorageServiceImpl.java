@@ -64,7 +64,7 @@ public class StorageServiceImpl implements StorageService {
             }
 //            int extensionIdx = file.getOriginalFilename().toString().lastIndexOf(".");
 //            String extension = "." + file.getOriginalFilename().toString().substring(extensionIdx + 1);
-            OFBUtil.encryptFile(file.getInputStream(), encryptedRootLocation + "\\" + file.getOriginalFilename());
+            OFBUtil.encryptFile(file.getInputStream(), encryptedRootLocation + "/" + file.getOriginalFilename());
         } catch (IllegalBlockSizeException | IOException | BadPaddingException e) {
             log.info(e.getMessage());
         }
@@ -85,7 +85,7 @@ public class StorageServiceImpl implements StorageService {
                 throw new StorageException(
                         "Cannot store file outside current directory.");
             }
-            OFBUtil.decryptFile(encryptedRootLocation + "\\" + file.getOriginalFilename(), decryptedRootLocation + "\\" + file.getOriginalFilename());
+            OFBUtil.decryptFile(encryptedRootLocation + "/" + file.getOriginalFilename(), decryptedRootLocation + "/" + file.getOriginalFilename());
         } catch (IllegalBlockSizeException | IOException | BadPaddingException e) {
             log.info(e.getMessage());
         }

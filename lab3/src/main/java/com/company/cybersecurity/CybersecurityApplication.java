@@ -2,6 +2,7 @@ package com.company.cybersecurity;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;

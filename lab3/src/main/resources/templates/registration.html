@@ -8,9 +8,15 @@
     <title>Деканат: Авторизоваться</title>
 </head>
 <body>
-<div th:if="${param.error}" th:text="${param.error}" style="color: red"></div>
+<style>
+    span {
+        color: red;
+    }
+</style>
 <h1>Авторизоваться</h1>
-<form th:action="@{/login}" method="post">
+<div th:if="${errorMessage}" th:text="${errorMessage}" style="color: red"></div>
+<div th:if="${successMessage}" th:text="${successMessage}" style="color: green"></div>
+<form th:action="@{/registration}" method="post" th:model="${registrationDto}">
     <table>
         <tr>
             <!-- Имя пользователя -->
@@ -22,9 +28,14 @@
             <td>Пароль:</td>
             <td><input type='password' name='password'/></td>
         </tr>
-        <!-- Войти -->
         <tr>
-            <td><input type="submit" value="Войти"/></td>
+            <!-- Пароль -->
+            <td>Подтвердите пароль:</td>
+            <td><input type='password' name='passwordConfirm'/></td>
+        </tr>
+        <!-- Зарегистрироваться -->
+        <tr>
+            <td><input type="submit" value="Зарегистрироваться"/></td>
         </tr>
     </table>
 </form>

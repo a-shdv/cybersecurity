@@ -10,7 +10,9 @@
 <body>
 <!--Справочная информация-->
 <h2>Расшифровать файл</h2>
-<div th:each="file : ${files}" th:text="${file.toString()}"></div>
+<div th:each="file : ${files}">
+    <a th:text="${file}" th:href="${file}"></a>
+</div>
 <br>
 <div>
     <form method="POST" enctype="multipart/form-data" action="/decrypt">
