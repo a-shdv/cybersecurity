@@ -28,7 +28,7 @@
             <!-- Пароль -->
             <td>Пароль:</td>
             <div th:if="${password != null}">
-                <td><input type='text' name='username' th:value='${password}'></td>
+                <td><input type='password' name='password' th:value='${password}'></td>
             </div>
             <div th:if="${password == null}">
             <td><input type='password' name='password'/></td>

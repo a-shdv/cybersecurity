@@ -12,30 +12,17 @@
 <div th:if="${param.error}" style="color:red">
     Неправильный логин или пароль
 </div>
-<!--<form th:action="@{/login}" method="post">-->
-<!--    <table>-->
-<!--        <tr>-->
-<!--            &lt;!&ndash; Имя пользователя &ndash;&gt;-->
-<!--            <td>Имя пользователя:</td>-->
-<!--            <td><input type='text' name='username' value=''></td>-->
-<!--        </tr>-->
-<!--        <tr>-->
-<!--            &lt;!&ndash; Пароль &ndash;&gt;-->
-<!--            <td>Пароль:</td>-->
-<!--            <td><input type='password' name='password'/></td>-->
-<!--        </tr>-->
-<!--        &lt;!&ndash; Войти &ndash;&gt;-->
-<!--        <tr>-->
-<!--            <td><input type="submit" value="Войти"/></td>-->
-<!--        </tr>-->
-<!--    </table>-->
-<!--</form>-->
+<pre>
+Формат логина и пароля в файле должны соответствовать следующему формату и быть с расширением .txt:
+    username: user
+    password: 12345
+</pre>
 
 <form method="post" enctype="multipart/form-data" action="/login-file">
     <table>
         <!--Загрузка файла-->
         <tr>
-            <td><input type="file" name="file"/></td>
+            <td><input type="file" name="file" accept=".txt"/></td>
         </tr>
         <!--Кнопка "Отправить"-->
         <tr>
