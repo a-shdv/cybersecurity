@@ -5,16 +5,17 @@ import org.springframework.beans.factory.annotation.Value;
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Paths;
 import java.security.*;
 
 public class OFBUtil {
     private static Cipher cipher;
-    @Value("${inputFileUpload.path}")
-    private static String inputFilePath;
+    @Value("${encryptedFileUpload.path}")
+    public static String encryptedFilePath;
 
     static {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
@@ -32,11 +33,11 @@ public class OFBUtil {
 
     public static void encryptFile(String path) throws IOException, IllegalBlockSizeException, BadPaddingException {
         FileInputStream inputStream = new FileInputStream(path);
-        FileOutputStream outputStream = new FileOutputStream(path);
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = inputStream.read(buffer)) != -1) {
-            byte[] output = cipher.update(buffer, 0, bytesRead);
+        FileOutputStream outputStream = new FileOutputStream("C:\\Users\\Антон\\IdeaProjects\\trash\\uploads\\encrypted\\test.txt");
+        byte[] buffer = new byte[(int) Paths.get(path).toFile().length()];
+        int numOfBytes;
+        while ((numOfBytes = inputStream.read(buffer)) != -1) {
+            byte[] output = cipher.update(buffer, 0, numOfBytes);
             if (output != null) {
                 outputStream.write(output);
             }
@@ -54,7 +55,7 @@ public class OFBUtil {
         FileOutputStream outputStream = new FileOutputStream("decrypted.txt");
         byte[] buffer = new byte[1024];
         int bytesRead;
-        byte[] outputBytes ;
+        byte[] outputBytes;
 
         while ((bytesRead = inputStream.read(buffer)) != -1) {
             byte[] output = cipher.update(buffer, 0, bytesRead);

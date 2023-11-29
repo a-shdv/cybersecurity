@@ -59,10 +59,10 @@ public class StorageServiceImpl implements StorageService {
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, destinationFile,
                         StandardCopyOption.REPLACE_EXISTING);
-                OFBUtil.encryptFile(String.valueOf(destinationFile));
             } catch (Exception ex) {
                 ex.getMessage();
             }
+            OFBUtil.encryptFile(String.valueOf(destinationFile));
         } catch (Exception ex) {
             ex.getMessage();
         }
