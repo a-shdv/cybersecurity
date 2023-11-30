@@ -1,0 +1,1 @@
+User(id=1, username=user, password=$2a$10$gRdL7s52y9vyR8rRaHaoP.VjhFVgtPX7iU84qLjoGGb2tky5gG.7O)
