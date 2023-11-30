@@ -65,7 +65,7 @@ public class HomeController {
         redirectAttributes.addFlashAttribute("message",
                 "You successfully uploaded " + file.getOriginalFilename() + "!");
 
-        return "redirect:/";
+        return "redirect:/encrypt";
     }
 
     @GetMapping("/decrypt")
@@ -88,7 +88,7 @@ public class HomeController {
         storageService.storeAndDecrypt(file);
         redirectAttributes.addFlashAttribute("message",
                 "You successfully uploaded " + file.getOriginalFilename() + "!");
-        return "redirect:/";
+        return "redirect:/decrypt";
     }
 
     @ExceptionHandler(StorageFileNotFoundException.class)
