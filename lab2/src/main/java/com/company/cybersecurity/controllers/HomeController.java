@@ -2,7 +2,6 @@ package com.company.cybersecurity.controllers;
 
 import com.company.cybersecurity.exceptions.StorageFileNotFoundException;
 import com.company.cybersecurity.services.StorageService;
-import com.company.cybersecurity.utils.SHAUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -30,7 +29,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String listUploadedFiles(Model model) throws IOException {
-
+        String test = (String) model.getAttribute("message");
         List<String> files = storageService.loadAll()
                 .filter(path -> !path.getFileName().toString().equals(".DS_Store"))
                 .map(path ->
@@ -39,7 +38,15 @@ public class HomeController {
                                 .build().toUri().toString())
                 .collect(Collectors.toList());
         model.addAttribute("files", files);
+        if (test != null)
+            model.addAttribute("message", test);
         return "home";
+    }
+
+    @PostMapping("/hash-message")
+    public String hashMessage(@RequestParam("message") String message, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("message", storageService.hashMessage(message));
+        return "redirect:/";
     }
 
     @GetMapping("/files/{filename:.+}")

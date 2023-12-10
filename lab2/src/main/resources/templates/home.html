@@ -11,13 +11,29 @@
 <!--Справочная информация-->
 <h2>Главная</h2>
 <p><b>Автор программы:</b> Шадаев А.Р.</p>
-<p><b>Вариант:</b> №4</p>
-<p><b>Задание:</b>Хэш-функция SHA-1.</p>
+<p><b>Группа:</b> ПИбд-42</p>
+<p><b>Вариант:</b> №28</p>
+<p><b>Задание:</b>Хэш-функция MD5.</p>
 
 <!--<div th:if="${message}">-->
 <!--    <h2 th:text="${message}"/>-->
 <!--</div>-->
+<br>
+<div>
+    <h3>Рассчитать хеш:</h3>
+    <form th:action="@{/hash-message}" th:method="post">
+        <label for="message"></label>
+        <input type="text" name="message" id="message">
 
+        <input type="submit" value="Отправить">
+    </form>
+</div>
+<div th:if= "${message != null}">
+    <br>
+    <span th:text="'Результат: ' + ${message}"></span>
+</div>
+<br>
+<h3>Рассчитать хеш для файла:</h3>
 <div>
     <form method="POST" enctype="multipart/form-data" action="/">
         <table>
