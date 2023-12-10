@@ -13,7 +13,8 @@ import java.util.stream.Stream;
 import com.company.cybersecurity.config.StorageProperties;
 import com.company.cybersecurity.exceptions.StorageException;
 import com.company.cybersecurity.exceptions.StorageFileNotFoundException;
-import com.company.cybersecurity.utils.SHAUtil;
+import com.company.cybersecurity.utils.MD5Util;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
@@ -22,7 +23,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import static com.company.cybersecurity.utils.MD5Util.computeMD5;
+
 @Service
+@Slf4j
 public class StorageServiceImpl implements StorageService {
 
     private final Path rootLocation;
@@ -55,16 +59,16 @@ public class StorageServiceImpl implements StorageService {
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, destinationFile,
                         StandardCopyOption.REPLACE_EXISTING);
-                String fileHash = SHAUtil.hashFile(String.valueOf(destinationFile));
+                String fileHash = MD5Util.toHexString(computeMD5(Files.readAllBytes(destinationFile))).toLowerCase();
 
                 // Rename the file with the hash
                 int extension = destinationFile.toString().lastIndexOf(".");
                 Path newDestinationFile = Paths.get(destinationFile.getParent().toString(), fileHash + "." + destinationFile.toString().substring(extension + 1));
                 Files.move(destinationFile, newDestinationFile, StandardCopyOption.REPLACE_EXISTING);
-            } catch (NoSuchAlgorithmException e) {
-                throw new RuntimeException(e);
+            } catch (IOException e) {
+                log.error(e.getMessage());
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new StorageException("Failed to store file.", e);
         }
     }

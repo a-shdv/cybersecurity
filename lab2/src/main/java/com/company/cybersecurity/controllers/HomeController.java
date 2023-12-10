@@ -2,7 +2,6 @@ package com.company.cybersecurity.controllers;
 
 import com.company.cybersecurity.exceptions.StorageFileNotFoundException;
 import com.company.cybersecurity.services.StorageService;
-import com.company.cybersecurity.utils.SHAUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
