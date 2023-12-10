@@ -98,17 +98,10 @@ public class MD5Util {
 
     public static String toHexString(byte[] b) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < b.length; i++) {
-            sb.append(String.format("%02X", b[i] & 0xFF));
+        for (byte value : b) {
+            sb.append(String.format("%02X", value & 0xFF));
         }
         return sb.toString();
-    }
-
-    public static void main(String[] args) {
-        String[] testStrings = {"", "a", "abc", "message digest", "abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", "12345678901234567890123456789012345678901234567890123456789012345678901234567890"};
-        for (String s : testStrings) {
-            System.out.println(toHexString(computeMD5("Untitled.rtf".getBytes())).toLowerCase());
-        }
     }
 }
 

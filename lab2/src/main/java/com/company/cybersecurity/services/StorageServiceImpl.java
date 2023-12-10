@@ -24,6 +24,7 @@ import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import static com.company.cybersecurity.utils.MD5Util.computeMD5;
+import static com.company.cybersecurity.utils.MD5Util.toHexString;
 
 @Service
 @Slf4j
@@ -71,6 +72,10 @@ public class StorageServiceImpl implements StorageService {
         } catch (Exception e) {
             throw new StorageException("Failed to store file.", e);
         }
+    }
+
+    public String hashMessage(String message) {
+        return toHexString(MD5Util.computeMD5(message.getBytes())).toLowerCase();
     }
 
     @Override

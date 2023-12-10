@@ -16,6 +16,8 @@ public interface StorageService {
 
     Path load(String filename);
 
+    String hashMessage(String message);
+
     Resource loadAsResource(String filename);
 
     void deleteAll();
